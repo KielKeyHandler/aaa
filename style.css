@@ -288,7 +288,7 @@ body.exiting .card{
   width: 100%;
   border: 2px solid rgba(178,132,255,0.4);
   border-radius: 12px;
-  overflow: hidden;
+  
   background: rgba(178,132,255,0.04);
 }
 
@@ -353,3 +353,53 @@ body.exiting .card{
 @media (max-width: 480px) {
   .cp-iframe { height: 380px; }
 }
+
+/* ── Done overlay inside iframe window ── */
+.cp-done-overlay {
+  display: none;
+  position: absolute;
+  inset: 0;
+  background: rgba(5,5,5,0.92);
+  z-index: 10;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border-radius: 0 0 10px 10px;
+}
+.cp-done-overlay.visible { display: flex; }
+.cp-done-icon {
+  font-size: 40px;
+  animation: popIn 0.4s cubic-bezier(0.16,1,0.3,1) both;
+}
+.cp-done-text {
+  font-size: 14px; font-weight: 800;
+  color: var(--green); letter-spacing: 1px;
+  animation: popIn 0.4s 0.1s cubic-bezier(0.16,1,0.3,1) both;
+}
+@keyframes popIn {
+  from { opacity:0; transform:scale(0.7); }
+  to   { opacity:1; transform:scale(1); }
+}
+.cp-iframe-wrap {
+  position: relative;
+  width: 100%;
+}
+
+/* ── Manual fallback button ── */
+.manual-btn {
+  width: 100%;
+  background: none;
+  border: none;
+  border-top: 1px solid rgba(178,132,255,0.1);
+  padding: 8px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(178,132,255,0.35);
+  cursor: pointer;
+  letter-spacing: 0.3px;
+  transition: color 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+.manual-btn:hover { color: rgba(178,132,255,0.7); }
