@@ -29,25 +29,39 @@
         <div class="step-node key-node">🔑</div>
       </div>
       <div class="badge cp">Checkpoint 1 of 3</div>
-      <div class="icon-wrap">
-        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+
+      <!-- Checkpoint window (hidden until Start clicked) -->
+      <div class="cp-window" id="cpWindow1">
+        <div class="cp-window-header">
+          <span class="cp-window-title">🔗 Complete the checkpoint below</span>
+          <div class="cp-timer-wrap">
+            <span class="cp-timer" id="cpTimer1">--</span>
+          </div>
+        </div>
+        <iframe class="cp-iframe" id="cpIframe1" src="about:blank" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-top-navigation"></iframe>
+        <div class="cp-window-footer" id="cpFooter1">
+          <span class="cp-foot-text">Complete the ad above, then continue</span>
+        </div>
       </div>
-      <h1>Checkpoint 1</h1>
-      <p class="sub">Visit the link below to unlock Continue</p>
-      <div class="divider"></div>
+
+      <p class="status-text" id="status1">⚠ Start the checkpoint below to unlock Continue</p>
+
       <div class="btn-wrap">
-        <a class="visit-btn" id="visitBtn1" href="#" target="_blank" rel="noopener noreferrer">
-          <svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-          Open Checkpoint Link
-        </a>
+        <button class="btn" id="startBtn1">
+          <span class="btn-label">
+            <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            Start Checkpoint
+          </span>
+        </button>
       </div>
-      <p class="status-text" id="status1">⚠ Open the link above to unlock Continue</p>
-      <div class="btn-wrap">
-        <div class="btn-pulse" id="pulse1" style="display:none"></div>
+
+      <div class="btn-wrap" style="display:none" id="continueWrap1">
+        <div class="btn-pulse" id="pulse1"></div>
         <button class="btn locked" id="continueBtn1" disabled>
           <span class="btn-label" id="label1">🔒 &nbsp;Locked</span>
         </button>
       </div>
+
       <div class="progress">
         <div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
       </div>
@@ -73,25 +87,38 @@
         <div class="step-node key-node">🔑</div>
       </div>
       <div class="badge cp">Checkpoint 2 of 3</div>
-      <div class="icon-wrap">
-        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+
+      <div class="cp-window" id="cpWindow2">
+        <div class="cp-window-header">
+          <span class="cp-window-title">🔗 Complete the checkpoint below</span>
+          <div class="cp-timer-wrap">
+            <span class="cp-timer" id="cpTimer2">--</span>
+          </div>
+        </div>
+        <iframe class="cp-iframe" id="cpIframe2" src="about:blank" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-top-navigation"></iframe>
+        <div class="cp-window-footer" id="cpFooter2">
+          <span class="cp-foot-text">Complete the ad above, then continue</span>
+        </div>
       </div>
-      <h1>Checkpoint 2</h1>
-      <p class="sub">You're halfway there — keep going!</p>
-      <div class="divider"></div>
+
+      <p class="status-text" id="status2">⚠ Start the checkpoint below to unlock Continue</p>
+
       <div class="btn-wrap">
-        <a class="visit-btn" id="visitBtn2" href="#" target="_blank" rel="noopener noreferrer">
-          <svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-          Open Checkpoint Link
-        </a>
+        <button class="btn" id="startBtn2">
+          <span class="btn-label">
+            <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            Start Checkpoint
+          </span>
+        </button>
       </div>
-      <p class="status-text" id="status2">⚠ Open the link above to unlock Continue</p>
-      <div class="btn-wrap">
-        <div class="btn-pulse" id="pulse2" style="display:none"></div>
+
+      <div class="btn-wrap" style="display:none" id="continueWrap2">
+        <div class="btn-pulse" id="pulse2"></div>
         <button class="btn locked" id="continueBtn2" disabled>
           <span class="btn-label" id="label2">🔒 &nbsp;Locked</span>
         </button>
       </div>
+
       <div class="progress">
         <div class="dot done"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div>
       </div>
@@ -117,25 +144,38 @@
         <div class="step-node key-node">🔑</div>
       </div>
       <div class="badge cp">Checkpoint 3 of 3</div>
-      <div class="icon-wrap">
-        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+
+      <div class="cp-window" id="cpWindow3">
+        <div class="cp-window-header">
+          <span class="cp-window-title">🔗 Complete the checkpoint below</span>
+          <div class="cp-timer-wrap">
+            <span class="cp-timer" id="cpTimer3">--</span>
+          </div>
+        </div>
+        <iframe class="cp-iframe" id="cpIframe3" src="about:blank" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-top-navigation"></iframe>
+        <div class="cp-window-footer" id="cpFooter3">
+          <span class="cp-foot-text">Complete the ad above, then continue</span>
+        </div>
       </div>
-      <h1>Checkpoint 3</h1>
-      <p class="sub">Almost there — last step before your key!</p>
-      <div class="divider"></div>
+
+      <p class="status-text" id="status3">⚠ Start the checkpoint below to unlock Continue</p>
+
       <div class="btn-wrap">
-        <a class="visit-btn" id="visitBtn3" href="#" target="_blank" rel="noopener noreferrer">
-          <svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-          Open Checkpoint Link
-        </a>
+        <button class="btn" id="startBtn3">
+          <span class="btn-label">
+            <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            Start Checkpoint
+          </span>
+        </button>
       </div>
-      <p class="status-text" id="status3">⚠ Open the link above to unlock Continue</p>
-      <div class="btn-wrap">
-        <div class="btn-pulse" id="pulse3" style="display:none"></div>
+
+      <div class="btn-wrap" style="display:none" id="continueWrap3">
+        <div class="btn-pulse" id="pulse3"></div>
         <button class="btn locked" id="continueBtn3" disabled>
           <span class="btn-label" id="label3">🔒 &nbsp;Locked</span>
         </button>
       </div>
+
       <div class="progress">
         <div class="dot done"></div><div class="dot done"></div><div class="dot active"></div><div class="dot"></div>
       </div>
