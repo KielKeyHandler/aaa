@@ -11,7 +11,7 @@
    then DONE_SIGNAL = 'done'
 ────────────────────────────────────────── */
 var CP_LINKS = {
-  1: 'https://lootlabs.gg/YOUR_CP1_LINK_HERE',
+  1: 'https://lootdest.org/s?YivJ6sQW',
   2: 'https://lootlabs.gg/YOUR_CP2_LINK_HERE',
   3: 'https://lootlabs.gg/YOUR_CP3_LINK_HERE',
 };
