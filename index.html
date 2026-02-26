@@ -1160,38 +1160,38 @@ function handleCheckout() {
     username: 'Quantum Hub',
     avatar_url: 'https://raw.githubusercontent.com/KielKeyHandler/icon/main/image_1.png',
     embeds: [{
-      title: '✦ New GCash Payment Submission',
+      title: 'New GCash Payment Submission',
       description: '> A new payment has been submitted and is awaiting verification.',
       color: 0xB06EE8,
       thumbnail: { url: 'https://raw.githubusercontent.com/KielKeyHandler/icon/main/image_1.png' },
       fields: [
         {
-          name: '📦 Plan',
+          name: 'Plan',
           value: '`' + plan + '` — **' + price + '** ' + period,
           inline: false
         },
         {
-          name: '💱 Amount Paid',
+          name: 'Amount Paid',
           value: '**' + priceInCur + '**',
           inline: true
         },
         {
-          name: '🌐 Currency',
+          name: 'Currency',
           value: curData.flag + ' `' + curCode + '` — ' + curData.name,
           inline: true
         },
         {
-          name: '👤 Discord User',
+          name: 'Discord User',
           value: '`' + discord + '`',
           inline: true
         },
         {
-          name: '🔖 Reference Number',
+          name: 'Reference Number',
           value: '`' + ref + '`',
           inline: true
         },
         {
-          name: '📎 Receipt',
+          name: 'Receipt',
           value: 'Screenshot attached below ↓',
           inline: false
         }
