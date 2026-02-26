@@ -1,0 +1,1604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quantum Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Cinzel:wght@400;600;700&family=Montserrat:wght@200;300;400;500&display=swap" rel="stylesheet">
+<style>
+/* ── REPLACE THESE LINKS ── */
+/* DISCORD_LINK   = https://discord.gg/YOUR_INVITE  */
+/* LINKVERTISE_URL= https://linkvertise.com/YOUR_ID  */
+/* LOOTLABS_URL   = https://loot-labs.com/YOUR_ID   */
+
+:root{
+  --p:#B06EE8;--pl:#D4AAFF;--pp:#E8D5FF;--pd:#7B3FAD;
+  --pg:rgba(176,110,232,.65);--ps:rgba(176,110,232,.13);
+  --bg:#07050C;--text:#EDE0FF;--dim:rgba(237,224,255,.42);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Montserrat',sans-serif;font-weight:300;overflow-x:hidden}
+body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");pointer-events:none;z-index:1;opacity:.4}
+#bg{position:fixed;inset:0;z-index:0;pointer-events:none}
+.amb{position:fixed;border-radius:50%;pointer-events:none;z-index:1;will-change:transform}
+.amb-l{top:10%;left:-200px;width:500px;height:500px;background:radial-gradient(circle,rgba(176,110,232,.07) 0%,transparent 70%);animation:drift 9s ease-in-out infinite alternate}
+.amb-r{bottom:5%;right:-200px;width:580px;height:580px;background:radial-gradient(circle,rgba(176,110,232,.06) 0%,transparent 70%);animation:drift 12s ease-in-out infinite alternate-reverse}
+@keyframes drift{from{transform:translateY(0)}to{transform:translateY(50px)}}
+
+/* CURSOR */
+#cur,#cur-ring{display:none;position:fixed;top:0;left:0;pointer-events:none;border-radius:50%;z-index:999999;will-change:transform;backface-visibility:hidden}
+#cur{width:8px;height:8px;background:#D4AAFF;box-shadow:0 0 8px rgba(176,110,232,.9),0 0 20px rgba(176,110,232,.4);transition:box-shadow .2s;transform:translate3d(-300px,-300px,0)}
+#cur-ring{width:32px;height:32px;border:1.5px solid rgba(176,110,232,.5);transform:translate3d(-300px,-300px,0) scale(1);transition:border-color .2s}
+#cur.hov{box-shadow:0 0 14px rgba(176,110,232,1),0 0 40px rgba(176,110,232,.6)}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:22px 48px;background:linear-gradient(to bottom,rgba(7,5,12,.94) 0%,transparent 100%);backdrop-filter:blur(10px)}
+.logo{font-family:'Cinzel',serif;font-size:1.2rem;font-weight:700;letter-spacing:.28em;color:var(--pl);text-shadow:0 0 18px var(--pg),0 0 48px rgba(176,110,232,.22);text-decoration:none}
+.logo span{color:var(--pp)}
+.hbg{display:flex;flex-direction:column;justify-content:center;gap:5px;width:36px;height:36px;background:none;border:none;padding:4px;z-index:300}
+.hbg span{display:block;width:100%;height:1.5px;background:var(--pl);box-shadow:0 0 5px var(--pg);transition:transform .35s cubic-bezier(.4,0,.2,1),opacity .35s ease;transform-origin:center;will-change:transform}
+.hbg.open span:nth-child(1){transform:translateY(6.5px) rotate(45deg)}
+.hbg.open span:nth-child(2){opacity:0;transform:scaleX(0)}
+.hbg.open span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg)}
+
+/* DRAWER */
+.drw{position:fixed;top:0;right:0;width:min(300px,85vw);height:100vh;background:rgba(9,6,17,.97);border-left:1px solid rgba(176,110,232,.18);backdrop-filter:blur(22px);z-index:250;display:flex;flex-direction:column;justify-content:center;padding:56px 44px;gap:6px;transform:translateX(110%);transition:transform .42s cubic-bezier(.4,0,.2,1);will-change:transform}
+.drw.open{transform:translateX(0)}
+.drw::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--p),transparent);box-shadow:0 0 20px var(--pg)}
+.drw-over{position:fixed;inset:0;background:rgba(0,0,0,.52);z-index:240;opacity:0;pointer-events:none;transition:opacity .42s ease}
+.drw-over.open{opacity:1;pointer-events:all}
+.drw-logo{position:absolute;top:26px;left:44px;font-family:'Cinzel',serif;font-size:.85rem;font-weight:700;letter-spacing:.3em;color:var(--pl);opacity:.55}
+.dl{display:flex;align-items:center;gap:16px;padding:17px 0;text-decoration:none;border-bottom:1px solid rgba(176,110,232,.07);opacity:0;transform:translateX(20px);transition:opacity .3s ease,transform .36s cubic-bezier(.34,1.2,.64,1);will-change:transform}
+.dl:last-child{border-bottom:none}
+.drw.open .dl{opacity:1;transform:translateX(0)}
+.drw.open .dl:nth-child(2){transition-delay:.06s}
+.drw.open .dl:nth-child(3){transition-delay:.13s}
+.drw.open .dl:nth-child(4){transition-delay:.20s}
+.dl-ico{width:42px;height:42px;flex-shrink:0;border:1px solid rgba(176,110,232,.28);display:flex;align-items:center;justify-content:center;transition:border-color .25s,filter .25s}
+.dl:hover .dl-ico{border-color:var(--p);filter:drop-shadow(0 0 6px rgba(176,110,232,.7))}
+.dl-ico svg{width:17px;height:17px;color:var(--pl)}
+.dl-label{font-family:'Cinzel',serif;font-size:.95rem;font-weight:600;letter-spacing:.1em;color:var(--dim);transition:color .25s}
+.dl:hover .dl-label{color:var(--pl)}
+.dl-sub{font-size:.52rem;letter-spacing:.2em;color:rgba(176,110,232,.38);margin-top:2px}
+
+/* PAGES */
+.page{display:none;min-height:100vh;position:relative;z-index:2;opacity:0}
+.page.active{display:block}
+
+/* TRANSITION OVERLAY */
+#pg-wipe{
+  position:fixed;inset:0;z-index:9000;pointer-events:none;
+  opacity:0;
+  background:radial-gradient(ellipse at 50% 50%, rgba(176,110,232,.18) 0%, rgba(7,5,12,.98) 70%);
+  transition:none;
+  backdrop-filter:blur(0px);
+  -webkit-backdrop-filter:blur(0px);
+}
+#pg-wipe.wipe-in{
+  transition:opacity .32s cubic-bezier(.4,0,.2,1), backdrop-filter .32s ease, -webkit-backdrop-filter .32s ease;
+  opacity:1;
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+}
+#pg-wipe.wipe-out{
+  transition:opacity .38s cubic-bezier(.4,0,.2,1) .08s, backdrop-filter .38s ease .08s, -webkit-backdrop-filter .38s ease .08s;
+  opacity:0;
+  backdrop-filter:blur(0px);
+  -webkit-backdrop-filter:blur(0px);
+}
+/* shimmer pulse in the center while transitioning */
+#pg-wipe::before{
+  content:'';position:absolute;
+  top:50%;left:50%;
+  width:160px;height:160px;
+  transform:translate(-50%,-50%) scale(0);
+  border-radius:50%;
+  background:radial-gradient(circle, rgba(176,110,232,.55) 0%, transparent 70%);
+  transition:transform .28s cubic-bezier(.34,1.5,.64,1) .06s, opacity .28s ease .06s;
+  opacity:0;
+}
+#pg-wipe.wipe-in::before{
+  transform:translate(-50%,-50%) scale(1);
+  opacity:1;
+}
+
+/* BUTTONS */
+.btn{font-family:'Montserrat',sans-serif;font-size:.58rem;letter-spacing:.3em;text-transform:uppercase;padding:14px 34px;text-decoration:none;display:inline-block;will-change:transform;transition:transform .35s cubic-bezier(.34,1.55,.64,1),filter .3s ease,color .25s}
+.btn-p{background:linear-gradient(135deg,#7B3FAD,#B06EE8,#D4AAFF,#B06EE8,#7B3FAD);background-size:200% 200%;color:#07050C;border:none;filter:drop-shadow(0 0 12px rgba(176,110,232,.5));animation:shimmer 4s infinite}
+.btn-p:hover{transform:translateY(-5px) scale(1.04);filter:drop-shadow(0 0 22px rgba(176,110,232,.9))}
+.btn-o{color:var(--pl);border:1px solid rgba(176,110,232,.38);background:transparent;filter:drop-shadow(0 0 0 transparent)}
+.btn-o:hover{transform:translateY(-5px) scale(1.04);filter:drop-shadow(0 0 14px rgba(176,110,232,.6));color:var(--pp)}
+.btn-back{display:inline-flex;align-items:center;gap:8px;font-family:'Montserrat',sans-serif;font-size:.55rem;letter-spacing:.25em;text-transform:uppercase;color:var(--dim);text-decoration:none;border:none;background:none;transition:color .25s,transform .3s cubic-bezier(.34,1.5,.64,1);will-change:transform;margin-bottom:32px;align-self:flex-start}
+.btn-back:hover{color:var(--pl);transform:translateX(-4px)}
+.btn-back svg{width:14px;height:14px}
+
+/* HERO PAGE */
+.hero{position:relative;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;z-index:2;padding:110px 24px 120px}
+.hero-title{font-family:'Cinzel',serif;font-size:clamp(2.6rem,8vw,6.5rem);font-weight:700;line-height:1.05;letter-spacing:.04em;color:transparent;background:linear-gradient(135deg,#7B3FAD 0%,#B06EE8 30%,#D4AAFF 55%,#B06EE8 75%,#7B3FAD 100%);background-size:200% 200%;-webkit-background-clip:text;background-clip:text;filter:drop-shadow(0 0 28px rgba(176,110,232,.5));animation:fadeUp .8s .5s both,shimmer 5s 1.5s infinite}
+.hero-sub{font-family:'Cinzel',serif;font-size:clamp(.95rem,3vw,1.7rem);font-weight:400;color:var(--pp);letter-spacing:.3em;margin-top:10px;opacity:.68;animation:fadeUp .8s .62s both}
+.hero-italic{font-family:'Cormorant Garamond',serif;font-size:clamp(.95rem,2.5vw,1.4rem);font-style:italic;color:var(--dim);margin-top:20px;animation:fadeUp .8s .74s both}
+.hdiv{width:110px;height:1px;background:linear-gradient(90deg,transparent,var(--p),transparent);box-shadow:0 0 10px var(--pg);margin:34px auto;animation:fadeUp .8s .88s both}
+.hcta{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;animation:fadeUp .8s 1.0s both}
+.scroll-hint{position:absolute;bottom:28px;left:0;right:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;animation:fadeUp .8s 1.5s both;pointer-events:none}
+.scroll-hint span{font-size:.48rem;letter-spacing:.42em;text-transform:uppercase;color:var(--dim)}
+.scroll-line{width:1px;height:40px;background:linear-gradient(to bottom,var(--p),transparent);animation:spulse 2.4s ease-in-out infinite}
+@keyframes spulse{0%,100%{opacity:.2;transform:scaleY(.85)}50%{opacity:1;transform:scaleY(1.15)}}
+.badge{display:inline-flex;align-items:center;gap:10px;border:1px solid rgba(176,110,232,.23);padding:8px 18px;margin-bottom:22px;font-size:.52rem;letter-spacing:.35em;text-transform:uppercase;color:var(--pl);animation:fadeUp .8s .2s both}
+.bdot{width:5px;height:5px;background:var(--p);border-radius:50%;box-shadow:0 0 8px var(--pg);animation:bpulse 2s ease-in-out infinite}
+@keyframes bpulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.6)}}
+@keyframes shimmer{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+/* STATS */
+.stats{position:relative;z-index:2;border-top:1px solid rgba(176,110,232,.1);border-bottom:1px solid rgba(176,110,232,.1);padding:52px 48px;display:grid;grid-template-columns:repeat(4,1fr);text-align:center;background:rgba(176,110,232,.02)}
+@media(max-width:680px){.stats{grid-template-columns:repeat(2,1fr);padding:36px 20px}}
+.stat{padding:18px 8px;border-right:1px solid rgba(176,110,232,.07)}
+.stat:last-child{border-right:none}
+@media(max-width:680px){.stat:nth-child(2){border-right:none}.stat:nth-child(3){border-top:1px solid rgba(176,110,232,.07)}.stat:nth-child(4){border-top:1px solid rgba(176,110,232,.07);border-right:none}}
+.snum{font-family:'Cinzel',serif;font-size:clamp(1.7rem,4vw,2.7rem);font-weight:700;color:transparent;background:linear-gradient(135deg,#B06EE8,#D4AAFF);-webkit-background-clip:text;background-clip:text;display:block;margin-bottom:7px;filter:drop-shadow(0 0 16px rgba(176,110,232,.4))}
+.slbl{font-size:.56rem;letter-spacing:.23em;text-transform:uppercase;color:var(--dim);line-height:1.55}
+
+/* SECTIONS */
+.sec{position:relative;z-index:2;padding:105px 48px}
+@media(max-width:768px){.sec{padding:72px 22px}}
+.sec-lbl{font-size:.53rem;letter-spacing:.5em;text-transform:uppercase;color:var(--p);margin-bottom:13px;opacity:0;transform:translateY(14px);transition:opacity .7s cubic-bezier(.4,0,.2,1),transform .7s cubic-bezier(.4,0,.2,1)}
+.sec-ttl{font-family:'Cinzel',serif;font-size:clamp(1.7rem,5vw,3.1rem);font-weight:400;line-height:1.22;opacity:0;transform:translateY(14px);transition:opacity .7s cubic-bezier(.4,0,.2,1) .1s,transform .7s cubic-bezier(.4,0,.2,1) .1s}
+.sec-ttl span{color:transparent;background:linear-gradient(135deg,#B06EE8,#D4AAFF);-webkit-background-clip:text;background-clip:text}
+.sec.vis .sec-lbl,.sec.vis .sec-ttl{opacity:1;transform:translateY(0)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;margin-top:56px}
+.card{position:relative;background:rgba(12,9,22,.78);border:1px solid rgba(176,110,232,.11);padding:38px 30px;overflow:hidden;opacity:0;transform:translateY(28px);transition:opacity .6s ease,transform .6s cubic-bezier(.34,1.1,.64,1),border-color .3s,filter .3s;will-change:transform,opacity}
+.sec.vis .card{opacity:1;transform:translateY(0)}
+.sec.vis .card:nth-child(1){transition-delay:.12s}
+.sec.vis .card:nth-child(2){transition-delay:.24s}
+.sec.vis .card:nth-child(3){transition-delay:.36s}
+.card:hover{transform:translateY(-7px) !important;filter:drop-shadow(0 12px 30px rgba(0,0,0,.6)) drop-shadow(0 0 20px rgba(176,110,232,.15));border-color:rgba(176,110,232,.35)}
+.card::after{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--p),transparent);opacity:0;transition:opacity .3s}
+.card:hover::after{opacity:1}
+.c-ico{width:48px;height:48px;border:1px solid rgba(176,110,232,.28);display:flex;align-items:center;justify-content:center;margin-bottom:24px;position:relative;transition:border-color .25s,filter .25s}
+.card:hover .c-ico{border-color:rgba(176,110,232,.5);filter:drop-shadow(0 0 8px rgba(176,110,232,.35))}
+.c-ico svg{width:19px;height:19px;color:var(--pl)}
+.c-num{position:absolute;top:-9px;right:-9px;font-family:'Cinzel',serif;font-size:.56rem;color:var(--p);opacity:.58}
+.card h3{font-family:'Cinzel',serif;font-size:.92rem;font-weight:600;letter-spacing:.08em;color:var(--text);margin-bottom:11px}
+.card p{font-size:.76rem;line-height:1.88;color:var(--dim)}
+.quote-sec{position:relative;z-index:2;padding:115px 48px;text-align:center}
+@media(max-width:768px){.quote-sec{padding:70px 22px}}
+.q-mark{font-family:'Cormorant Garamond',serif;font-size:9rem;line-height:.5;color:transparent;-webkit-text-stroke:1px rgba(176,110,232,.14);user-select:none;display:block;margin-bottom:-18px}
+.q-txt{font-family:'Cormorant Garamond',serif;font-size:clamp(1.25rem,3.2vw,2.1rem);font-style:italic;font-weight:300;line-height:1.68;max-width:760px;margin:0 auto;color:var(--text)}
+.q-txt em{color:var(--pl);font-style:normal}
+.q-auth{margin-top:34px;font-size:.56rem;letter-spacing:.34em;text-transform:uppercase;color:var(--dim)}
+.q-auth span{color:var(--pl)}
+.cta-sec{position:relative;z-index:2;padding:70px 22px 110px;text-align:center}
+.p-card{position:relative;max-width:760px;margin:0 auto;padding:66px 50px;border:1px solid rgba(176,110,232,.23);background:rgba(12,9,22,.87);backdrop-filter:blur(22px);overflow:hidden}
+@media(max-width:580px){.p-card{padding:46px 22px}}
+.p-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent 0%,var(--p) 30%,var(--pl) 50%,var(--p) 70%,transparent 100%);box-shadow:0 0 18px var(--pg)}
+.p-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent 0%,var(--p) 30%,var(--pl) 50%,var(--p) 70%,transparent 100%);box-shadow:0 0 18px var(--pg)}
+.p-card h2{font-family:'Cinzel',serif;font-size:clamp(1.45rem,4vw,2.5rem);font-weight:600;color:var(--text);margin-bottom:16px}
+.p-card p{font-size:.8rem;line-height:1.92;color:var(--dim);max-width:440px;margin:0 auto 38px}
+.corn{position:absolute;width:26px;height:26px}
+.c-tl{top:17px;left:17px;border-top:1px solid var(--p);border-left:1px solid var(--p)}
+.c-tr{top:17px;right:17px;border-top:1px solid var(--p);border-right:1px solid var(--p)}
+.c-bl{bottom:17px;left:17px;border-bottom:1px solid var(--p);border-left:1px solid var(--p)}
+.c-br{bottom:17px;right:17px;border-bottom:1px solid var(--p);border-right:1px solid var(--p)}
+.orn{display:flex;align-items:center;gap:22px;justify-content:center;margin:18px 0}
+.orn-l{flex:1;max-width:170px;height:1px;background:linear-gradient(90deg,transparent,rgba(176,110,232,.28))}
+.orn-r{flex:1;max-width:170px;height:1px;background:linear-gradient(90deg,rgba(176,110,232,.28),transparent)}
+.orn-d{width:5px;height:5px;background:var(--p);transform:rotate(45deg);box-shadow:0 0 8px var(--pg)}
+footer{position:relative;z-index:2;padding:34px 48px;border-top:1px solid rgba(176,110,232,.07);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px}
+@media(max-width:580px){footer{padding:26px 22px;flex-direction:column;text-align:center}}
+footer .logo{font-size:.95rem}
+footer p{font-size:.52rem;letter-spacing:.2em;color:var(--dim)}
+@media(max-width:480px){nav{padding:20px 22px}}
+
+/* ── KEY PAGE ── */
+#page-key{padding-top:72px}
+.key-wrap{max-width:560px;margin:0 auto;padding:32px 24px 100px;text-align:center;display:flex;flex-direction:column;align-items:center}
+.page-eyebrow{font-size:.52rem;letter-spacing:.5em;text-transform:uppercase;color:var(--p);margin-bottom:20px}
+.page-title{font-family:'Cinzel',serif;font-size:clamp(1.8rem,5vw,3rem);font-weight:700;color:transparent;background:linear-gradient(135deg,#7B3FAD,#B06EE8,#D4AAFF,#B06EE8,#7B3FAD);background-size:200% 200%;-webkit-background-clip:text;background-clip:text;filter:drop-shadow(0 0 20px rgba(176,110,232,.5));animation:shimmer 4s infinite;margin-bottom:16px}
+.page-desc{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.1rem;color:var(--dim);line-height:1.7;margin-bottom:48px}
+.key-steps{display:flex;flex-direction:column;gap:16px;margin-bottom:48px;text-align:left}
+.key-step{display:flex;align-items:flex-start;gap:16px;background:rgba(12,9,22,.8);border:1px solid rgba(176,110,232,.12);padding:20px 22px;position:relative;overflow:hidden;transition:border-color .3s,filter .3s}
+.key-step:hover{border-color:rgba(176,110,232,.35);filter:drop-shadow(0 0 14px rgba(176,110,232,.1))}
+.key-step::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--p),transparent);opacity:0;transition:opacity .3s}
+.key-step:hover::before{opacity:1}
+.step-num{font-family:'Cinzel',serif;font-size:1.4rem;font-weight:700;color:transparent;background:linear-gradient(135deg,#B06EE8,#D4AAFF);-webkit-background-clip:text;background-clip:text;line-height:1;flex-shrink:0;min-width:28px}
+.step-info h4{font-family:'Cinzel',serif;font-size:.8rem;font-weight:600;letter-spacing:.08em;color:var(--text);margin-bottom:4px}
+.step-info p{font-size:.72rem;line-height:1.7;color:var(--dim)}
+/* provider cards */
+.key-providers{display:flex;flex-direction:column;gap:16px}
+.provider-card{display:flex;align-items:center;gap:20px;text-decoration:none;border:1px solid rgba(255,255,255,.08);background:rgba(12,9,22,.85);padding:20px 24px;overflow:hidden;position:relative;will-change:transform;transition:transform .38s cubic-bezier(.34,1.5,.64,1),border-color .3s,filter .3s}
+.provider-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;opacity:0;transition:opacity .3s}
+.provider-card:hover{transform:translateY(-5px) scale(1.01)}
+/* Linkvertise — orange brand #FF6B00 */
+.provider-lv{border-color:rgba(255,107,0,.2)}
+.provider-lv::before{background:linear-gradient(90deg,transparent,#FF6B00,transparent);box-shadow:0 0 14px rgba(255,107,0,.5)}
+.provider-lv:hover{border-color:rgba(255,107,0,.55);filter:drop-shadow(0 8px 24px rgba(255,107,0,.28))}
+/* Lootlabs — purple brand #7B2FBE */
+.provider-ll{border-color:rgba(123,47,190,.25)}
+.provider-ll::before{background:linear-gradient(90deg,transparent,#A855F7,transparent);box-shadow:0 0 14px rgba(168,85,247,.5)}
+.provider-ll:hover{border-color:rgba(168,85,247,.55);filter:drop-shadow(0 8px 24px rgba(123,47,190,.32))}
+.provider-logo{width:64px;height:64px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border-radius:12px;overflow:hidden}
+.provider-info{flex:1;text-align:left}
+.provider-name{font-family:'Cinzel',serif;font-size:.95rem;font-weight:700;letter-spacing:.08em;color:var(--text);margin-bottom:5px}
+.provider-desc{font-size:.58rem;letter-spacing:.14em;color:var(--dim);line-height:1.6}
+.provider-arrow{font-size:1.2rem;color:var(--dim);transition:transform .3s cubic-bezier(.34,1.5,.64,1),color .25s;flex-shrink:0}
+.provider-lv:hover .provider-arrow{transform:translateX(5px);color:#FF6B00}
+.provider-ll:hover .provider-arrow{transform:translateX(5px);color:#A855F7}
+.key-note{font-size:.58rem;letter-spacing:.18em;color:var(--dim);margin-top:22px;line-height:1.8}
+
+/* ── SHOP PAGE ── */
+#page-shop{padding-top:72px}
+.shop-wrap{max-width:900px;margin:0 auto;padding:32px 24px 100px}
+.shop-header{text-align:center;margin-bottom:60px}
+.shop-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:22px}
+@media(max-width:640px){
+  .shop-grid{grid-template-columns:1fr 1fr}
+  .shop-card:last-child{grid-column:1 / -1;max-width:calc(50% - 11px);margin:0 auto;width:100%}
+}
+.shop-card{position:relative;background:rgba(12,9,22,.85);border:1px solid rgba(176,110,232,.14);padding:36px 28px 32px;overflow:hidden;transition:transform .4s cubic-bezier(.34,1.1,.64,1),border-color .3s,filter .3s;will-change:transform;text-align:center}
+.shop-card:hover{transform:translateY(-8px);border-color:rgba(176,110,232,.4);filter:drop-shadow(0 14px 35px rgba(0,0,0,.6)) drop-shadow(0 0 22px rgba(176,110,232,.18))}
+.shop-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--p),transparent);opacity:0;transition:opacity .3s}
+.shop-card:hover::before{opacity:1}
+.shop-card.featured{border-color:rgba(176,110,232,.3);background:rgba(14,9,26,.9)}
+.shop-card.featured::after{content:'POPULAR';position:absolute;top:14px;right:14px;font-family:'Cinzel',serif;font-size:.45rem;letter-spacing:.3em;background:linear-gradient(135deg,#B06EE8,#D4AAFF);color:#07050C;padding:4px 10px;font-weight:700}
+.shop-tier{font-size:.5rem;letter-spacing:.45em;text-transform:uppercase;color:var(--p);margin-bottom:14px}
+.shop-name{font-family:'Cinzel',serif;font-size:1.3rem;font-weight:700;color:var(--text);margin-bottom:6px}
+.shop-price{width:100%;text-align:center;font-family:'Cinzel',serif;font-size:2.2rem;font-weight:700;color:transparent;background:linear-gradient(135deg,#B06EE8,#D4AAFF);-webkit-background-clip:text;background-clip:text;filter:drop-shadow(0 0 14px rgba(176,110,232,.4));margin:16px 0 4px;display:flex;align-items:baseline;justify-content:center;gap:2px}
+.shop-price span{font-size:.85rem;opacity:.6;font-weight:400;color:transparent;background:linear-gradient(135deg,#B06EE8,#D4AAFF);-webkit-background-clip:text;background-clip:text}
+.shop-period{font-size:.52rem;letter-spacing:.2em;color:var(--dim);margin-bottom:24px}
+.shop-divider{width:50px;height:1px;background:linear-gradient(90deg,transparent,rgba(176,110,232,.4),transparent);margin:0 auto 24px}
+.shop-features{list-style:none;margin-bottom:30px;text-align:left}
+.shop-features li{font-size:.72rem;line-height:1.7;color:var(--dim);padding:5px 0;display:flex;align-items:center;gap:10px}
+.shop-features li::before{content:'✦';color:var(--p);font-size:.5rem;flex-shrink:0}
+.btn-shop{display:block;width:100%;font-family:'Montserrat',sans-serif;font-size:.55rem;letter-spacing:.28em;text-transform:uppercase;padding:13px 20px;text-decoration:none;will-change:transform;transition:transform .35s cubic-bezier(.34,1.55,.64,1),filter .3s;text-align:center}
+.btn-shop-p{background:linear-gradient(135deg,#7B3FAD,#B06EE8,#D4AAFF,#B06EE8,#7B3FAD);background-size:200% 200%;color:#07050C;border:none;filter:drop-shadow(0 0 10px rgba(176,110,232,.4));animation:shimmer 4s infinite}
+.btn-shop-p:hover{transform:translateY(-3px) scale(1.02);filter:drop-shadow(0 0 20px rgba(176,110,232,.85))}
+.btn-shop-o{color:var(--pl);border:1px solid rgba(176,110,232,.38);background:transparent}
+.btn-shop-o:hover{transform:translateY(-3px) scale(1.02);filter:drop-shadow(0 0 12px rgba(176,110,232,.55));color:var(--pp)}
+.shop-note{text-align:center;margin-top:40px;font-size:.6rem;letter-spacing:.18em;color:var(--dim);line-height:1.8}
+.shop-note a{color:var(--pl);text-decoration:none}
+.shop-note a:hover{color:var(--pp)}
+
+/* ── CURRENCY CONVERTER ── */
+.currency-bar{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:36px;flex-wrap:wrap}
+.currency-label{font-size:.5rem;letter-spacing:.35em;text-transform:uppercase;color:var(--dim)}
+/* Custom dropdown */
+.cur-drop{position:relative;user-select:none;-webkit-user-select:none}
+.cur-trigger{display:flex;align-items:center;gap:10px;padding:9px 14px 9px 14px;border:1px solid rgba(176,110,232,.28);background:rgba(12,9,22,.9);cursor:pointer;transition:border-color .25s,filter .25s;min-width:200px;justify-content:space-between;-webkit-tap-highlight-color:transparent}
+.cur-trigger:hover,.cur-drop.open .cur-trigger{border-color:rgba(176,110,232,.6);filter:drop-shadow(0 0 8px rgba(176,110,232,.22))}
+.cur-trigger::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(176,110,232,.5),transparent);opacity:0;transition:opacity .25s}
+.cur-drop.open .cur-trigger::before{opacity:1}
+.cur-flag{font-size:1rem;line-height:1;flex-shrink:0}
+.cur-text{font-family:'Cinzel',serif;font-size:.72rem;letter-spacing:.08em;color:var(--pl);flex:1}
+.cur-arrow{width:10px;height:10px;flex-shrink:0;transition:transform .28s cubic-bezier(.34,1.5,.64,1)}
+.cur-arrow path{stroke:var(--p);stroke-width:1.5;fill:none;stroke-linecap:round}
+.cur-drop.open .cur-arrow{transform:rotate(180deg)}
+/* panel */
+.cur-panel{position:absolute;top:calc(100% + 6px);left:0;right:0;background:rgba(9,6,18,.97);border:1px solid rgba(176,110,232,.22);z-index:5000;max-height:260px;overflow-y:auto;overflow-x:hidden;opacity:0;transform:translateY(-6px);pointer-events:none;transition:opacity .22s ease,transform .22s cubic-bezier(.34,1.2,.64,1);scrollbar-width:thin;scrollbar-color:rgba(176,110,232,.3) transparent;box-shadow:0 16px 48px rgba(0,0,0,.7),0 0 30px rgba(176,110,232,.08)}
+.cur-panel::-webkit-scrollbar{width:3px}
+.cur-panel::-webkit-scrollbar-track{background:transparent}
+.cur-panel::-webkit-scrollbar-thumb{background:rgba(176,110,232,.3);border-radius:2px}
+.cur-drop.open .cur-panel{opacity:1;transform:translateY(0);pointer-events:all}
+/* search inside panel */
+.cur-search-wrap{position:sticky;top:0;background:rgba(9,6,18,.97);padding:8px 10px;border-bottom:1px solid rgba(176,110,232,.1)}
+.cur-search{width:100%;background:rgba(176,110,232,.07);border:1px solid rgba(176,110,232,.18);color:var(--text);font-family:'Montserrat',sans-serif;font-size:.72rem;padding:7px 10px;outline:none;transition:border-color .2s}
+.cur-search:focus{border-color:rgba(176,110,232,.5)}
+.cur-search::placeholder{color:rgba(237,224,255,.2);font-size:.65rem}
+/* items */
+.cur-item{display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;transition:background .15s;border-bottom:1px solid rgba(176,110,232,.05);-webkit-tap-highlight-color:transparent}
+.cur-item:last-child{border-bottom:none}
+.cur-item:hover,.cur-item:focus{background:rgba(176,110,232,.1);outline:none}
+.cur-item.selected{background:rgba(176,110,232,.08)}
+.cur-item.selected .cur-item-code{color:var(--pl)}
+.cur-item-flag{font-size:.95rem;line-height:1;flex-shrink:0;width:22px;text-align:center}
+.cur-item-code{font-family:'Cinzel',serif;font-size:.7rem;letter-spacing:.08em;color:var(--pl);flex-shrink:0;width:36px}
+.cur-item-name{font-size:.62rem;color:var(--dim);letter-spacing:.04em}
+.cur-item.hidden{display:none}
+.shop-converted{font-size:.58rem;letter-spacing:.14em;color:#C4A0F0;margin-top:2px;margin-bottom:0;min-height:1em;transition:opacity .3s}
+.checkout-converted{font-size:.75rem;letter-spacing:.12em;color:#C4A0F0;margin-top:4px;min-height:1.2em;transition:opacity .3s}
+
+/* ── CHECKOUT PAGE ── */
+#page-checkout{padding-top:72px}
+.checkout-wrap{max-width:520px;margin:0 auto;padding:32px 24px 100px}
+.checkout-plan-badge{display:inline-flex;align-items:center;gap:10px;border:1px solid rgba(176,110,232,.25);padding:7px 18px;margin-bottom:28px;font-size:.5rem;letter-spacing:.38em;text-transform:uppercase;color:var(--pl)}
+.checkout-title{font-family:'Cinzel',serif;font-size:clamp(1.6rem,4vw,2.4rem);font-weight:700;color:transparent;background:linear-gradient(135deg,#7B3FAD,#B06EE8,#D4AAFF,#B06EE8,#7B3FAD);background-size:200% 200%;-webkit-background-clip:text;background-clip:text;animation:shimmer 4s infinite;margin-bottom:8px}
+.checkout-price-row{display:flex;align-items:baseline;gap:4px;margin:18px 0 6px}
+.checkout-price-big{font-family:'Cinzel',serif;font-size:3rem;font-weight:700;color:transparent;background:linear-gradient(135deg,#B06EE8,#D4AAFF);-webkit-background-clip:text;background-clip:text;filter:drop-shadow(0 0 18px rgba(176,110,232,.45));line-height:1}
+.checkout-price-sub{font-family:'Cinzel',serif;font-size:1rem;color:var(--dim);font-weight:400}
+.checkout-period{font-size:.55rem;letter-spacing:.22em;color:var(--dim);margin-bottom:32px}
+.checkout-divider{width:100%;height:1px;background:linear-gradient(90deg,transparent,rgba(176,110,232,.25),transparent);margin:28px 0}
+.checkout-features{list-style:none;margin-bottom:36px}
+.checkout-features li{font-size:.74rem;line-height:1.7;color:var(--dim);padding:7px 0;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(176,110,232,.06)}
+.checkout-features li:last-child{border-bottom:none}
+.checkout-features li::before{content:'✦';color:var(--p);font-size:.48rem;flex-shrink:0}
+.checkout-box{position:relative;background:rgba(12,9,22,.9);border:1px solid rgba(176,110,232,.18);padding:32px 28px;overflow:hidden}
+.checkout-box::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--p),transparent);box-shadow:0 0 12px var(--pg)}
+.checkout-label{font-size:.5rem;letter-spacing:.35em;text-transform:uppercase;color:var(--dim);margin-bottom:22px}
+.checkout-field{width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(176,110,232,.18);color:var(--text);font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:300;padding:13px 16px;margin-bottom:14px;outline:none;transition:border-color .25s,filter .25s}
+.checkout-field:focus{border-color:rgba(176,110,232,.55);filter:drop-shadow(0 0 8px rgba(176,110,232,.2))}
+.checkout-field::placeholder{color:rgba(237,224,255,.22)}
+.checkout-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.checkout-submit{display:block;width:100%;font-family:'Montserrat',sans-serif;font-size:.6rem;letter-spacing:.3em;text-transform:uppercase;padding:15px 20px;border:none;background:linear-gradient(135deg,#7B3FAD,#B06EE8,#D4AAFF,#B06EE8,#7B3FAD);background-size:200% 200%;color:#07050C;font-weight:600;margin-top:22px;will-change:transform;transition:transform .35s cubic-bezier(.34,1.55,.64,1),filter .3s;animation:shimmer 4s infinite}
+.checkout-submit:hover{transform:translateY(-3px) scale(1.02);filter:drop-shadow(0 0 20px rgba(176,110,232,.8))}
+.checkout-secure{display:flex;align-items:center;justify-content:center;gap:7px;margin-top:16px;font-size:.5rem;letter-spacing:.2em;color:var(--dim)}
+.checkout-secure svg{width:11px;height:11px;color:var(--p)}
+.checkout-note{text-align:center;margin-top:28px;font-size:.55rem;letter-spacing:.15em;color:var(--dim);line-height:1.9}
+.checkout-note a{color:var(--pl);text-decoration:none}
+.checkout-corn{position:absolute;width:20px;height:20px}
+.co-tl{top:12px;left:12px;border-top:1px solid rgba(176,110,232,.4);border-left:1px solid rgba(176,110,232,.4)}
+.co-tr{top:12px;right:12px;border-top:1px solid rgba(176,110,232,.4);border-right:1px solid rgba(176,110,232,.4)}
+.co-bl{bottom:12px;left:12px;border-bottom:1px solid rgba(176,110,232,.4);border-left:1px solid rgba(176,110,232,.4)}
+.co-br{bottom:12px;right:12px;border-bottom:1px solid rgba(176,110,232,.4);border-right:1px solid rgba(176,110,232,.4)}
+
+/* PAYMENT METHOD TABS */
+.pay-methods{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:26px}
+.pay-tab{display:flex;flex-direction:column;align-items:center;gap:7px;padding:13px 8px;border:1px solid rgba(176,110,232,.15);background:rgba(255,255,255,.03);cursor:pointer;transition:border-color .25s,filter .25s,background .25s;will-change:transform;position:relative;outline:none}
+.pay-tab:hover{border-color:rgba(176,110,232,.35);background:rgba(176,110,232,.06)}
+.pay-tab.active{border-color:var(--p);background:rgba(176,110,232,.1);filter:drop-shadow(0 0 10px rgba(176,110,232,.2))}
+.pay-tab.active::after{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--p),transparent);box-shadow:0 0 8px var(--pg)}
+.pay-tab svg{width:22px;height:22px;color:var(--dim);transition:color .25s}
+.pay-tab.active svg{color:var(--pl)}
+.pay-tab span{font-family:'Montserrat',sans-serif;font-size:.48rem;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);transition:color .25s}
+.pay-tab.active span{color:var(--pl)}
+/* payment panels */
+.pay-panel{display:none;opacity:0;transform:translateY(8px);transition:opacity .28s ease,transform .32s cubic-bezier(.34,1.2,.64,1)}
+.pay-panel.active{display:block}
+.pay-panel.visible{opacity:1;transform:translateY(0)}
+.pay-panels-wrap{position:relative}
+
+/* ── CREDITS SECTION ── */
+.credits-wrap{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:36px 0 32px;width:100%;max-width:540px;padding:0 16px;box-sizing:border-box}
+.credit-card{display:flex;flex-direction:row;align-items:center;gap:13px;background:rgba(12,9,22,.75);border:1px solid rgba(176,110,232,.14);border-radius:14px;padding:14px 16px;cursor:pointer;position:relative;overflow:hidden;-webkit-tap-highlight-color:transparent;box-sizing:border-box;
+  /* GPU-only transform — no filter on hover to kill lag */
+  transform:translateZ(0);
+  transition:border-color .25s ease,background .25s ease,transform .3s cubic-bezier(.34,1.3,.64,1);
+  will-change:transform;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.credit-card::before{content:'';position:absolute;inset:0;border-radius:14px;background:radial-gradient(circle at 50% 0%,rgba(176,110,232,.14),transparent 65%);opacity:0;transition:opacity .3s ease;pointer-events:none}
+.credit-card:hover,.credit-card:active{border-color:rgba(176,110,232,.45);background:rgba(18,10,34,.9);transform:translateY(-3px) scale(1.02) translateZ(0)}
+.credit-card:hover::before,.credit-card:active::before{opacity:1}
+.credit-avatar{width:40px;height:40px;min-width:40px;flex-shrink:0;border-radius:10px;border:1px solid rgba(176,110,232,.25);display:flex;align-items:center;justify-content:center;color:var(--pl);background:rgba(176,110,232,.07);transition:border-color .2s ease;transform:translateZ(0)}
+.credit-card:hover .credit-avatar,.credit-card:active .credit-avatar{border-color:rgba(176,110,232,.6)}
+.credit-info{flex:1;min-width:0;text-align:left}
+.credit-role{font-size:.38rem;letter-spacing:.28em;text-transform:uppercase;color:var(--p);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.credit-name{font-family:'Cinzel',serif;font-size:.78rem;font-weight:600;letter-spacing:.05em;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.credit-chevron{flex-shrink:0;opacity:.3;transform:translateZ(0);transition:opacity .2s ease,transform .25s cubic-bezier(.34,1.5,.64,1)}
+.credit-card:hover .credit-chevron,.credit-card:active .credit-chevron{opacity:.9;transform:translateX(3px) translateZ(0)}
+/* On very small screens go single column */
+@media(max-width:360px){.credits-wrap{grid-template-columns:1fr}}
+
+/* ── DEV MODAL ── */
+#dev-modal{position:fixed;inset:0;z-index:8000;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .38s ease}
+#dev-modal.open{opacity:1;pointer-events:all}
+#dev-modal-bg{position:absolute;inset:0;background:rgba(4,2,12,.6);backdrop-filter:blur(0px);-webkit-backdrop-filter:blur(0px);transition:backdrop-filter .42s ease,-webkit-backdrop-filter .42s ease,background .42s ease}
+#dev-modal.open #dev-modal-bg{backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);background:rgba(4,2,12,.72)}
+/* page content blurs behind modal */
+.page-blur-target{transition:opacity .38s ease,transform .4s ease;transform:translateZ(0);backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.modal-open .page-blur-target{opacity:.35;transform:scale(0.97) translateZ(0)}
+.dev-modal-box{position:relative;z-index:1;background:rgba(10,7,20,.96);border:1px solid rgba(176,110,232,.25);border-radius:20px;max-width:420px;width:100%;padding:44px 36px 36px;transform:scale(.88) translateY(24px);transition:transform .48s cubic-bezier(.34,1.35,.64,1),opacity .35s ease;overflow:hidden;opacity:0}
+#dev-modal.open .dev-modal-box{transform:scale(1) translateY(0);opacity:1}
+.dev-modal-box::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--p),transparent);box-shadow:0 0 16px var(--pg);border-radius:20px 20px 0 0}
+.dev-modal-close{position:absolute;top:14px;right:14px;background:none;border:1px solid rgba(176,110,232,.2);border-radius:50%;color:var(--dim);width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:border-color .2s,color .2s,transform .3s cubic-bezier(.34,1.5,.64,1),background .2s;font-size:.85rem;line-height:1}
+.dev-modal-close:hover{border-color:var(--p);color:var(--pl);transform:rotate(90deg) scale(1.1);background:rgba(176,110,232,.08)}
+.dev-modal-avatar{width:64px;height:64px;border-radius:16px;border:1px solid rgba(176,110,232,.35);display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-size:1.5rem;font-weight:700;color:var(--pl);background:rgba(176,110,232,.1);margin-bottom:20px;filter:drop-shadow(0 0 14px rgba(176,110,232,.25))}
+.dev-modal-role{font-size:.46rem;letter-spacing:.44em;text-transform:uppercase;color:var(--p);margin-bottom:8px}
+.dev-modal-name{font-family:'Cinzel',serif;font-size:1.4rem;font-weight:700;color:var(--text);margin-bottom:20px}
+.dev-modal-divider{width:100%;height:1px;background:linear-gradient(90deg,transparent,rgba(176,110,232,.25),transparent);margin-bottom:20px}
+.dev-modal-desc{font-size:.76rem;line-height:1.88;color:var(--dim)}
+.dev-modal-corn{position:absolute;width:16px;height:16px}
+.dmc-tl{top:10px;left:10px;border-top:1px solid rgba(176,110,232,.35);border-left:1px solid rgba(176,110,232,.35);border-radius:4px 0 0 0}
+.dmc-tr{top:10px;right:10px;border-top:1px solid rgba(176,110,232,.35);border-right:1px solid rgba(176,110,232,.35);border-radius:0 4px 0 0}
+.dmc-bl{bottom:10px;left:10px;border-bottom:1px solid rgba(176,110,232,.35);border-left:1px solid rgba(176,110,232,.35);border-radius:0 0 0 4px}
+.dmc-br{bottom:10px;right:10px;border-bottom:1px solid rgba(176,110,232,.35);border-right:1px solid rgba(176,110,232,.35);border-radius:0 0 4px 0}
+</style>
+</head>
+</head>
+</head>
+<body>
+
+<div id="pg-wipe"></div>
+<div id="cur"></div>
+<div id="cur-ring"></div>
+<div class="amb amb-l"></div>
+<div class="amb amb-r"></div>
+<canvas id="bg"></canvas>
+<div class="drw-over" id="dov"></div>
+
+<!-- DRAWER -->
+<div class="drw" id="drw">
+  <span class="drw-logo">QUANTUM HUB</span>
+  <a href="#" class="dl" id="nav-key">
+    <div class="dl-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg></div>
+    <div><div class="dl-label">Key</div><div class="dl-sub">Get your access key</div></div>
+  </a>
+  <a href="#" class="dl" id="nav-shop">
+    <div class="dl-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg></div>
+    <div><div class="dl-label">Shop</div><div class="dl-sub">Browse our store</div></div>
+  </a>
+  <a href="https://discord.gg/YOUR_INVITE" target="_blank" rel="noopener" class="dl" id="nav-discord">
+    <div class="dl-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057.1 18.18.118 18.302.16 18.418a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg></div>
+    <div><div class="dl-label">Discord</div><div class="dl-sub">Join our community ↗</div></div>
+  </a>
+</div>
+
+<!-- NAV -->
+<nav>
+  <a class="logo" href="#" id="nav-home">QUANTUM <span>HUB</span></a>
+  <button class="hbg" id="hbg" aria-label="Menu"><span></span><span></span><span></span></button>
+</nav>
+
+<!-- ══ PAGE: HOME ══ -->
+<div class="page active" id="page-home">
+  <section class="hero page-blur-target">
+    <div class="badge"><span class="bdot"></span>Established 2022 &nbsp;&#8212;&nbsp; Trusted Since Day One</div>
+    <h1 class="hero-title">QUANTUM HUB</h1>
+    <p class="hero-sub">Premium Script Hub</p>
+    <p class="hero-italic">Precision-engineered scripts, built for those who demand the extraordinary</p>
+    <div class="hdiv"></div>
+
+    <!-- CREDITS -->
+    <div class="credits-wrap">
+
+      <div class="credit-card" onclick="openDev('owner')">
+        <div class="credit-avatar">
+          <!-- Crown — Owner -->
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--pl)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 20h20M4 20L2 8l5 4 5-8 5 8 5-4-2 12"/>
+            <circle cx="12" cy="4" r="1" fill="var(--pl)" stroke="none"/>
+            <circle cx="2" cy="8" r="1" fill="var(--pl)" stroke="none"/>
+            <circle cx="22" cy="8" r="1" fill="var(--pl)" stroke="none"/>
+          </svg>
+        </div>
+        <div class="credit-info">
+          <div class="credit-role">Owner</div>
+          <div class="credit-name">Trustenotcondom</div>
+        </div>
+        <svg class="credit-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 18l6-6-6-6"/></svg>
+      </div>
+
+      <div class="credit-card" onclick="openDev('dev')">
+        <div class="credit-avatar">
+          <!-- Lua code braces — Script Developer -->
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--pl)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M8 3H7a2 2 0 0 0-2 2v5a2 2 0 0 1-2 2 2 2 0 0 1 2 2v5a2 2 0 0 0 2 2h1"/>
+            <path d="M16 3h1a2 2 0 0 1 2 2v5a2 2 0 0 0 2 2 2 2 0 0 0-2 2v5a2 2 0 0 1-2 2h-1"/>
+          </svg>
+        </div>
+        <div class="credit-info">
+          <div class="credit-role">Main Script Developer</div>
+          <div class="credit-name">Flazhygg</div>
+        </div>
+        <svg class="credit-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 18l6-6-6-6"/></svg>
+      </div>
+
+      <div class="credit-card" onclick="openDev('webdev')">
+        <div class="credit-avatar">
+          <!-- Monitor/browser — Website Developer -->
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--pl)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="3" width="20" height="14" rx="2"/>
+            <path d="M8 21h8M12 17v4"/>
+            <path d="M6 7h.01M9 7h6"/>
+          </svg>
+        </div>
+        <div class="credit-info">
+          <div class="credit-role">Website Developer</div>
+          <div class="credit-name">Trustkiel</div>
+        </div>
+        <svg class="credit-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 18l6-6-6-6"/></svg>
+      </div>
+
+      <div class="credit-card" onclick="openDev('tester')">
+        <div class="credit-avatar">
+          <!-- Checkmark shield — Tester -->
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--pl)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <polyline points="9 12 11 14 15 10"/>
+          </svg>
+        </div>
+        <div class="credit-info">
+          <div class="credit-role">Web / Main Tester</div>
+          <div class="credit-name">cudal03ytph</div>
+        </div>
+        <svg class="credit-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 18l6-6-6-6"/></svg>
+      </div>
+
+    </div>
+
+    <div class="hcta">
+      <a href="https://discord.gg/YOUR_INVITE" target="_blank" rel="noopener" class="btn btn-o">Join Discord ↗</a>
+    </div>
+
+    <div class="scroll-hint"><span>Scroll</span><div class="scroll-line"></div></div>
+  </section>
+
+  <!-- DEV MODAL -->
+  <div id="dev-modal" onclick="handleModalClick(event)">
+    <div id="dev-modal-bg"></div>
+    <div class="dev-modal-box">
+      <div class="dev-modal-corn dmc-tl"></div>
+      <div class="dev-modal-corn dmc-tr"></div>
+      <div class="dev-modal-corn dmc-bl"></div>
+      <div class="dev-modal-corn dmc-br"></div>
+      <button class="dev-modal-close" onclick="closeDev()">✕</button>
+      <div class="dev-modal-avatar" id="dm-avatar"></div>
+      <div class="dev-modal-role" id="dm-role">Owner</div>
+      <div class="dev-modal-name" id="dm-name">Trustenotcondom</div>
+      <div class="dev-modal-divider"></div>
+      <p class="dev-modal-desc" id="dm-desc"></p>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><span class="snum" data-t="4" data-s="+">4+</span><span class="slbl">Years Since Established</span></div>
+    <div class="stat"><span class="snum" data-t="1" data-s="">1</span><span class="slbl">Elite Script</span></div>
+    <div class="stat"><span class="snum" data-t="95" data-s="%">95%</span><span class="slbl">Client Satisfaction</span></div>
+    <div class="stat"><span class="snum" data-t="2022" data-s="">2022</span><span class="slbl">Active Since</span></div>
+  </div>
+
+  <section class="sec" id="features">
+    <p class="sec-lbl">&#10022; What We Offer</p>
+    <h2 class="sec-ttl">Crafted for<br><span>Peak Performance</span></h2>
+    <div class="cards">
+      <div class="card">
+        <div class="c-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg><span class="c-num">01</span></div>
+        <h3>Optimized Performance</h3>
+        <p>Our script is engineered at the quantum level. Every millisecond is accounted for — smooth, fast, and relentlessly reliable no matter the environment.</p>
+      </div>
+      <div class="card">
+        <div class="c-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><span class="c-num">02</span></div>
+        <h3>Secure &amp; Private</h3>
+        <p>Built with a key-based authentication system. Only verified users gain access — protecting both your identity and the integrity of the script.</p>
+      </div>
+      <div class="card">
+        <div class="c-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg><span class="c-num">03</span></div>
+        <h3>Community Driven</h3>
+        <p>A thriving Discord community behind every update. User feedback shapes every release — because we build this for you, not just ourselves.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="quote-sec">
+    <div class="orn"><div class="orn-l"></div><div class="orn-d"></div><div class="orn-r"></div></div>
+    <span class="q-mark">"</span>
+    <p class="q-txt">Since <em>2022</em>, we have not chased trends — we have set the standard, one flawless execution at a time.</p>
+    <p class="q-auth">— The <span>Quantum Hub</span> Standard</p>
+    <div class="orn" style="margin-top:52px"><div class="orn-l"></div><div class="orn-d"></div><div class="orn-r"></div></div>
+  </section>
+
+  <section class="cta-sec">
+    <div class="p-card">
+      <div class="corn c-tl"></div><div class="corn c-tr"></div><div class="corn c-bl"></div><div class="corn c-br"></div>
+      <h2>Ready to Join?</h2>
+      <p>Get your key, browse the shop, or connect with our community. Quantum Hub has been trusted since 2022 — experience it for yourself.</p>
+      <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
+        <a href="#" class="btn btn-p show-key">Get Key</a>
+        <a href="#" class="btn btn-o show-shop">Open Shop</a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <a class="logo" href="#" id="footer-home">QUANTUM HUB</a>
+    <p>&#169; 2022&#8211;2025 Quantum Hub. All rights reserved.</p>
+    <p>Est. 2022</p>
+  </footer>
+</div>
+
+<!-- ══ PAGE: KEY ══ -->
+<div class="page" id="page-key">
+  <div class="key-wrap">
+    <button class="btn-back show-home">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      Back to Home
+    </button>
+    <p class="page-eyebrow">&#10022; Access System</p>
+    <h1 class="page-title">Get Your Key</h1>
+    <p class="page-desc">Complete the steps below to receive your Quantum Hub access key. Choose your preferred checkpoint provider.</p>
+
+    <div class="key-steps">
+      <div class="key-step">
+        <span class="step-num">01</span>
+        <div class="step-info">
+          <h4>Complete a Checkpoint</h4>
+          <p>Click one of the links below. Complete the short checkpoint on the provider's site to verify you're human.</p>
+        </div>
+      </div>
+      <div class="key-step">
+        <span class="step-num">02</span>
+        <div class="step-info">
+          <h4>Copy Your Key</h4>
+          <p>After completing the checkpoint, your key will be displayed. Copy it carefully — it expires periodically.</p>
+        </div>
+      </div>
+      <div class="key-step">
+        <span class="step-num">03</span>
+        <div class="step-info">
+          <h4>Paste &amp; Execute</h4>
+          <p>Open Quantum Hub in your executor, paste your key when prompted, and you're in. Enjoy the script.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="key-providers">
+
+      <!-- Linkvertise — green brand, embedded logo -->
+      <a href="https://linkvertise.com/YOUR_ID" target="_blank" rel="noopener" class="provider-card provider-lv">
+        <div class="provider-logo" style="background:linear-gradient(135deg,#1a0a00,#2e1200)">
+          <!-- Linkvertise: orange "L" with link chain — matches their actual orange logo -->
+          <svg width="42" height="42" viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="42" height="42" rx="11" fill="#FF6B00" fill-opacity="0.15"/>
+            <!-- The "L" lettermark -->
+            <path d="M13 10 L13 28 L22 28" stroke="#FF6B00" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <!-- Small chain link dot accent -->
+            <circle cx="27" cy="16" r="3.5" stroke="#FF6B00" stroke-width="2" fill="none"/>
+            <circle cx="27" cy="25" r="3.5" stroke="#FF6B00" stroke-width="2" fill="none"/>
+            <line x1="27" y1="19.5" x2="27" y2="21.5" stroke="#FF6B00" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="provider-info">
+          <div class="provider-name">Linkvertise</div>
+          <div class="provider-desc">Complete a short checkpoint · Opens new tab</div>
+        </div>
+        <span class="provider-arrow">→</span>
+      </a>
+
+      <!-- Lootlabs — orange brand, embedded logo -->
+      <a href="https://loot-labs.com/YOUR_ID" target="_blank" rel="noopener" class="provider-card provider-ll">
+        <div class="provider-logo" style="background:linear-gradient(135deg,#0e0520,#1a0a35)">
+          <!-- Lootlabs: purple loot chest — matches their actual purple logo -->
+          <svg width="42" height="42" viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="42" height="42" rx="11" fill="#A855F7" fill-opacity="0.15"/>
+            <!-- Chest body -->
+            <rect x="9" y="20" width="24" height="14" rx="2" stroke="#A855F7" stroke-width="2" fill="#A855F7" fill-opacity="0.1"/>
+            <!-- Chest lid -->
+            <path d="M9 22 L9 16 Q9 12 21 12 Q33 12 33 16 L33 22" stroke="#A855F7" stroke-width="2" fill="#A855F7" fill-opacity="0.15"/>
+            <!-- Center latch -->
+            <rect x="18" y="20" width="6" height="5" rx="1.5" stroke="#A855F7" stroke-width="1.8" fill="none"/>
+            <!-- Sparkle on lid -->
+            <circle cx="21" cy="17" r="1.5" fill="#A855F7" fill-opacity="0.9"/>
+          </svg>
+        </div>
+        <div class="provider-info">
+          <div class="provider-name">Lootlabs</div>
+          <div class="provider-desc">Complete a short checkpoint · Opens new tab</div>
+        </div>
+        <span class="provider-arrow">→</span>
+      </a>
+
+    </div>
+    <p class="key-note">Keys are free. Checkpoints support the development of Quantum Hub.<br>Having issues? Join our <a href="https://discord.gg/YOUR_INVITE" target="_blank" style="color:var(--pl);text-decoration:none">Discord ↗</a> for support.</p>
+  </div>
+</div>
+
+<!-- ══ PAGE: SHOP ══ -->
+<div class="page" id="page-shop">
+  <div class="shop-wrap">
+    <button class="btn-back show-home">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      Back to Home
+    </button>
+
+    <!-- ════════════════════════════════════════════
+         SHOP PAGE HEADER — edit title & subtitle
+         ════════════════════════════════════════════ -->
+    <div class="shop-header">
+      <p class="page-eyebrow">&#10022; Store</p>
+      <h1 class="page-title">Quantum Shop</h1> <!-- ← SHOP PAGE TITLE -->
+      <p style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.1rem;color:var(--dim);line-height:1.7;max-width:460px;margin:0 auto">
+        Upgrade your experience. Premium plans unlock exclusive features and priority support. <!-- ← SHOP SUBTITLE -->
+      </p>
+    </div>
+
+    <div class="shop-grid">
+
+      <!-- CURRENCY SELECTOR -->
+      <div style="grid-column:1/-1">
+        <div class="currency-bar">
+          <span class="currency-label">&#10022; Show prices in</span>
+          <div class="cur-drop" id="shop-drop">
+            <div class="cur-trigger" id="shop-trigger" onclick="toggleDrop('shop')">
+              <span class="cur-flag" id="shop-flag">🇺🇸</span>
+              <span class="cur-text" id="shop-cur-text">USD — US Dollar</span>
+              <svg class="cur-arrow" viewBox="0 0 10 6"><path d="M1 1l4 4 4-4"/></svg>
+            </div>
+            <div class="cur-panel" id="shop-panel">
+              <div class="cur-search-wrap"><input class="cur-search" placeholder="Search currency..." oninput="filterCur(this,'shop-panel')" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></div>
+              <div id="shop-list"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════════════════════════════════════
+           CARD 1 — FREE TIER
+           To remove this card: delete this entire block
+           ════════════════════════════════════════ -->
+      <div class="shop-card">
+        <p class="shop-tier">&#10022; Starter</p>              <!-- ← TIER LABEL (top small text) -->
+        <h2 class="shop-name">Free</h2>                        <!-- ← PLAN NAME -->
+        <div class="shop-price">$0<span>/mo</span></div>       <!-- ← PRICE  |  change $0 and /mo -->
+        <p class="shop-converted" id="conv-free">Always free</p>
+        <p class="shop-period">Forever free</p>                <!-- ← BILLING PERIOD text -->
+        <div class="shop-divider"></div>
+        <ul class="shop-features">
+          <!-- ← ADD or REMOVE <li> lines to change features -->
+          <li>Full script access via key</li>
+          <li>Community Discord support</li>
+          <li>Regular updates</li>
+          <li>Basic features included</li>
+        </ul>
+        <!-- ← BUTTON: opens key page on this site (no checkout needed for free) -->
+        <a href="#" class="btn-shop btn-shop-o show-key">Get Free Key</a>
+      </div>
+
+      <!-- ════════════════════════════════════════
+           CARD 2 — PRO TIER  (FEATURED / POPULAR badge)
+           To remove "POPULAR" badge: remove class "featured" from the div below
+           To make a different card featured: move class "featured" to that card
+           ════════════════════════════════════════ -->
+      <div class="shop-card featured">
+        <p class="shop-tier">&#10022; Premium</p>              <!-- ← TIER LABEL -->
+        <h2 class="shop-name">Monthly</h2>                         <!-- ← PLAN NAME -->
+        <div class="shop-price">$2<span>.99/mo</span></div>    <!-- ← PRICE  |  change $4 and .99/mo -->
+        <p class="shop-converted" id="conv-monthly">≈ loading...</p>
+        <p class="shop-period">Billed monthly</p>              <!-- ← BILLING PERIOD text -->
+        <div class="shop-divider"></div>
+        <ul class="shop-features">
+          <!-- ← ADD or REMOVE <li> lines to change features -->
+          <li>No key system — instant access</li>
+          <li>Priority Discord support</li>
+          <li>Early access to new features</li>
+          <li>Exclusive Pro-only scripts</li>
+          <li>Ad-free checkpoint bypass</li>
+        </ul>
+        <!-- ← BUTTON: opens checkout page for Monthly plan -->
+        <a href="#" class="btn-shop btn-shop-p show-checkout" data-plan="Monthly" data-price="$2.99" data-period="per month">Buy Monthly</a>
+      </div>
+
+      <!-- ════════════════════════════════════════
+           CARD 3 — LIFETIME TIER
+           To add a 4th card: copy this entire block and paste after this one
+           ════════════════════════════════════════ -->
+      <div class="shop-card">
+        <p class="shop-tier">&#10022; Elite</p>                <!-- ← TIER LABEL -->
+        <h2 class="shop-name">Lifetime</h2>                    <!-- ← PLAN NAME -->
+        <div class="shop-price">$8<span>.99</span></div>      <!-- ← PRICE  |  change $19 and .99 -->
+        <p class="shop-converted" id="conv-lifetime">≈ loading...</p>
+        <p class="shop-period">One-time payment</p>            <!-- ← BILLING PERIOD text -->
+        <div class="shop-divider"></div>
+        <ul class="shop-features">
+          <!-- ← ADD or REMOVE <li> lines to change features -->
+          <li>Everything in Pro, forever</li>
+          <li>VIP Discord role</li>
+          <li>Private beta testing access</li>
+          <li>Direct developer support</li>
+          <li>Never pay again</li>
+        </ul>
+        <!-- ← BUTTON: opens checkout page for Lifetime plan -->
+        <a href="#" class="btn-shop btn-shop-p show-checkout" data-plan="Lifetime" data-price="$8.99" data-period="one-time">Buy Lifetime</a>
+      </div>
+
+    </div><!-- end shop-grid -->
+
+    <!-- ════════════════════════════════════════
+         SHOP FOOTER NOTE — edit the text and links below
+         ════════════════════════════════════════ -->
+    <p class="shop-note">
+      Purchases are handled via our Discord server. DM an admin after joining.<br> <!-- ← EDIT THIS TEXT -->
+      <a href="https://discord.gg/YOUR_INVITE" target="_blank" rel="noopener">Join Discord ↗</a> <!-- ← DISCORD LINK -->
+      &nbsp;·&nbsp; All sales final. No refunds on digital goods. <!-- ← EDIT POLICY TEXT -->
+    </p>
+
+  </div>
+</div>
+
+<!-- ══ PAGE: CHECKOUT ══ -->
+<div class="page" id="page-checkout">
+  <div class="checkout-wrap">
+    <button class="btn-back show-shop">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      Back to Shop
+    </button>
+
+    <div id="checkout-plan-badge" class="checkout-plan-badge"><span class="bdot"></span><span id="co-plan-name">Monthly</span></div>
+    <h1 class="checkout-title">Complete Your Order</h1>
+    <div class="checkout-price-row">
+      <span class="checkout-price-big" id="co-price">$2.99</span>
+      <span class="checkout-price-sub" id="co-period">per month</span>
+    </div>
+    <p class="checkout-converted" id="co-converted"></p>
+    <p class="checkout-period" id="co-period-note">Cancel anytime · Instant access after payment</p>
+    <div class="currency-bar" style="margin-top:12px;margin-bottom:0">
+      <span class="currency-label">Currency</span>
+      <div class="cur-drop" id="checkout-drop">
+        <div class="cur-trigger" id="checkout-trigger" onclick="toggleDrop('checkout')">
+          <span class="cur-flag" id="checkout-flag">🇺🇸</span>
+          <span class="cur-text" id="checkout-cur-text">USD — US Dollar</span>
+          <svg class="cur-arrow" viewBox="0 0 10 6"><path d="M1 1l4 4 4-4"/></svg>
+        </div>
+        <div class="cur-panel" id="checkout-panel">
+          <div class="cur-search-wrap"><input class="cur-search" placeholder="Search currency..." oninput="filterCur(this,'checkout-panel')" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></div>
+          <div id="checkout-list"></div>
+        </div>
+      </div>
+    </div>
+
+    <ul class="checkout-features" id="co-features"></ul>
+
+    <div class="checkout-divider"></div>
+
+    <div class="checkout-box" style="position:relative">
+      <div class="checkout-corn co-tl"></div>
+      <div class="checkout-corn co-tr"></div>
+      <div class="checkout-corn co-bl"></div>
+      <div class="checkout-corn co-br"></div>
+
+      <p class="checkout-label">&#10022; Payment Method</p>
+
+      <!-- PAYMENT METHOD TABS -->
+      <div class="pay-methods">
+        <button class="pay-tab active" data-method="card" onclick="switchPay('card')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+          <span>Card</span>
+        </button>
+        <button class="pay-tab" data-method="paypal" onclick="switchPay('paypal')">
+          <!-- PayPal P icon -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 20h2.5M9 20l1-6h3.5c2.5 0 4.5-1.5 5-4 .4-2-1-4-3.5-4H8L6 16"/><path d="M10 10c.5-2 2-3 4-3h2c1.5 0 2.5 1 2.5 2.5C18 12 16.5 13 15 13h-3"/></svg>
+          <span>PayPal</span>
+        </button>
+        <button class="pay-tab" data-method="gcash" onclick="switchPay('gcash')">
+          <!-- GCash G icon -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M16 12h-4v2h4"/><path d="M16 10a5 5 0 1 0 0 4"/></svg>
+          <span>GCash</span>
+        </button>
+      </div>
+
+      <div class="pay-panels-wrap">
+      <!-- CARD PANEL -->
+      <div class="pay-panel active visible" id="panel-card">
+        <!-- WORK IN PROGRESS BANNER -->
+        <div style="border:1px solid rgba(176,110,232,.2);border-radius:10px;background:rgba(176,110,232,.05);padding:20px;text-align:center;margin-bottom:4px">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(176,110,232,.6)" stroke-width="1.4" stroke-linecap="round" style="margin-bottom:10px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <p style="font-family:'Cinzel',serif;font-size:.85rem;color:var(--pl);letter-spacing:.12em;margin-bottom:6px">Work in Progress</p>
+          <p style="font-size:.62rem;color:var(--dim);line-height:1.75;letter-spacing:.06em">Card payment integration is currently being set up. Please use <strong style="color:var(--pl)">GCash</strong> or <strong style="color:var(--pl)">PayPal</strong> in the meantime.</p>
+        </div>
+      </div>
+
+      <!-- PAYPAL PANEL -->
+      <div class="pay-panel" id="panel-paypal">
+        <div style="text-align:center;padding:24px 0 8px">
+          <p style="font-family:'Cinzel',serif;font-size:.9rem;color:var(--pl);letter-spacing:.08em;margin-bottom:10px">PayPal</p>
+          <p style="font-size:.65rem;color:var(--dim);line-height:1.8;margin-bottom:24px">You will be redirected to PayPal to complete your payment securely. The PayPal app will open automatically if you have it installed.</p>
+          <!-- ← REPLACE YOUR_PAYPAL_USERNAME with your actual PayPal.me username -->
+          <button id="paypal-btn" onclick="openPayPal()"
+            style="display:inline-flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:14px 20px;background:linear-gradient(135deg,#003087,#009cde,#012169);border:none;border-radius:10px;font-family:'Montserrat',sans-serif;font-size:.58rem;letter-spacing:.25em;text-transform:uppercase;color:#fff;text-decoration:none;font-weight:600;cursor:pointer;transition:filter .3s,transform .3s cubic-bezier(.34,1.5,.64,1);will-change:transform;filter:drop-shadow(0 4px 14px rgba(0,112,186,.45))"
+            onmouseover="this.style.filter='drop-shadow(0 6px 20px rgba(0,112,186,.7))';this.style.transform='translateY(-2px) scale(1.02)'"
+            onmouseout="this.style.filter='drop-shadow(0 4px 14px rgba(0,112,186,.45))';this.style.transform=''">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            Pay with PayPal
+          </button>
+          <p style="font-size:.5rem;letter-spacing:.15em;color:rgba(237,224,255,.25);margin-top:14px">Opens PayPal app · Falls back to browser</p>
+        </div>
+      </div>
+
+      <!-- GCASH PANEL -->
+      <div class="pay-panel" id="panel-gcash">
+        <p style="font-family:'Cinzel',serif;font-size:.9rem;color:var(--pl);letter-spacing:.08em;margin-bottom:10px">GCash</p>
+        <p style="font-size:.66rem;color:rgba(176,110,232,.75);line-height:1.75;margin-bottom:18px;border:1px solid rgba(176,110,232,.18);border-radius:8px;padding:10px 14px;background:rgba(176,110,232,.05)">
+          ⚠ Make sure you are already a member of our Discord server before sending payment.
+        </p>
+        <p style="font-size:.65rem;color:var(--dim);line-height:1.8;margin-bottom:12px">Send the exact amount to the GCash number below, then fill in the details and attach your receipt screenshot.</p>
+        <p style="font-size:.62rem;color:rgba(255,90,90,.8);line-height:1.75;margin-bottom:16px;border:1px solid rgba(255,80,80,.2);border-radius:8px;padding:10px 14px;background:rgba(255,50,50,.05);letter-spacing:.04em">
+          ⚠ Submitting a fake receipt or an invalid reference number will result in a permanent ban from Quantum Hub and our Discord server.
+        </p>
+        <!-- ← REPLACE with your actual GCash number -->
+        <div id="gcash-number" onclick="copyGcash()" style="border:1px solid rgba(176,110,232,.25);border-radius:8px;padding:13px 18px;margin-bottom:16px;font-family:'Cinzel',serif;font-size:1.05rem;color:var(--pl);letter-spacing:.12em;text-align:center;cursor:pointer;transition:border-color .25s,filter .25s,background .25s;user-select:none;-webkit-user-select:none;position:relative" title="Click to copy">
+          <span id="gcash-num-text">09XX — XXX — XXXX</span>
+          <span id="gcash-copy-hint" style="display:block;font-family:'Montserrat',sans-serif;font-size:.42rem;letter-spacing:.22em;color:rgba(176,110,232,.45);margin-top:4px;text-transform:uppercase">Tap to copy</span>
+        </div>
+        <input class="checkout-field" style="border-radius:8px" id="gcash-ref" type="text" placeholder="Reference Number (from GCash receipt)">
+        <input class="checkout-field" style="border-radius:8px" id="gcash-discord" type="text" placeholder="Discord Username (e.g. username#0000)">
+        <!-- File drop zone -->
+        <div id="gcash-drop" style="border:1.5px dashed rgba(176,110,232,.3);border-radius:10px;padding:22px 16px;text-align:center;cursor:pointer;transition:border-color .25s,background .25s;margin-top:4px;position:relative" onclick="document.getElementById('gcash-file').click()" ondragover="gcashDragOver(event)" ondragleave="gcashDragLeave(event)" ondrop="gcashDrop(event)">
+          <input type="file" id="gcash-file" accept="image/*,.pdf" style="display:none" onchange="gcashFileChosen(this)">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(176,110,232,.5)" stroke-width="1.5" stroke-linecap="round" style="margin-bottom:8px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <p id="gcash-drop-label" style="font-size:.62rem;letter-spacing:.15em;color:rgba(176,110,232,.5);text-transform:uppercase">Drop receipt here or tap to upload</p>
+        </div>
+      </div>
+      </div><!-- /pay-panels-wrap -->
+
+      <div id="checkout-msg" style="display:none;border-radius:8px;padding:10px 14px;margin-top:14px;font-size:.64rem;letter-spacing:.1em;line-height:1.7;text-align:center"></div>
+
+      <button class="checkout-submit" id="confirm-btn" onclick="handleCheckout()">
+        Confirm Order
+      </button>
+
+      <div class="checkout-secure">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Secured · 256-bit SSL Encrypted
+      </div>
+    </div>
+
+    <p class="checkout-note">
+      After payment, access is granted via Discord.<br>
+      Join our <a href="https://discord.gg/YOUR_INVITE" target="_blank">Discord ↗</a> if you need help.
+    </p>
+  </div>
+</div>
+
+<script>
+// ── LINKS TO EDIT ──
+var DISCORD = 'https://discord.gg/YOUR_INVITE';
+var LINKVERTISE = 'https://linkvertise.com/YOUR_ID';
+var LOOTLABS = 'https://loot-labs.com/YOUR_ID';
+
+// ── PLAN FEATURES ──
+var PLAN_FEATURES = {
+  'Monthly': ['No key system — instant access','Priority Discord support','Early access to new features','Exclusive Pro-only scripts','Ad-free checkpoint bypass'],
+  'Lifetime': ['Everything in Monthly, forever','VIP Discord role','Private beta testing access','Direct developer support','Never pay again']
+};
+
+// ── PAGE ROUTER with WIPE TRANSITION ──
+var pages = { home:'page-home', key:'page-key', shop:'page-shop', checkout:'page-checkout' };
+var currentPage = 'home';
+var wipe = document.getElementById('pg-wipe');
+var transitioning = false;
+
+function goTo(name) {
+  if (name === currentPage || transitioning) { closeDrw(); return; }
+  transitioning = true;
+  closeDrw();
+
+  var old = document.getElementById(pages[currentPage]);
+
+  // Phase 1: fade + blur IN (cover)
+  wipe.className = '';
+  wipe.offsetHeight; // reflow
+  wipe.className = 'wipe-in';
+
+  // Fade out old page content simultaneously
+  old.style.transition = 'opacity .22s ease, transform .22s ease, filter .22s ease';
+  old.style.opacity = '0';
+  old.style.transform = 'scale(.97)';
+  old.style.filter = 'blur(4px)';
+
+  setTimeout(function() {
+    // Swap while fully blurred
+    old.classList.remove('active');
+    old.style.cssText = '';
+    currentPage = name;
+    window.scrollTo(0, 0);
+
+    var next = document.getElementById(pages[name]);
+    next.style.opacity = '0';
+    next.style.transform = 'scale(1.03)';
+    next.style.filter = 'blur(6px)';
+    next.classList.add('active');
+    document.querySelectorAll('#' + pages[name] + ' .sec').forEach(function(s){ io.observe(s); });
+
+    // Phase 2: fade + blur OUT (reveal new page)
+    setTimeout(function() {
+      wipe.className = 'wipe-out';
+      // New page fades in with a slight scale + unblur
+      next.style.transition = 'opacity .42s cubic-bezier(.4,0,.2,1), transform .42s cubic-bezier(.34,1.1,.64,1), filter .42s ease';
+      next.style.opacity = '1';
+      next.style.transform = 'scale(1)';
+      next.style.filter = 'blur(0px)';
+
+      setTimeout(function() {
+        wipe.className = '';
+        next.style.transition = '';
+        next.style.cssText = 'opacity:1';
+        transitioning = false;
+      }, 480);
+    }, 80);
+  }, 340);
+}
+
+// ── HAMBURGER ──
+var hbg=document.getElementById('hbg'), drw=document.getElementById('drw'), dov=document.getElementById('dov');
+function closeDrw(){ hbg.classList.remove('open'); drw.classList.remove('open'); dov.classList.remove('open'); document.body.style.overflow=''; }
+function openDrw(){ hbg.classList.add('open'); drw.classList.add('open'); dov.classList.add('open'); document.body.style.overflow='hidden'; }
+hbg.addEventListener('click', function(){ drw.classList.contains('open') ? closeDrw() : openDrw(); });
+dov.addEventListener('click', closeDrw);
+
+// ── NAV WIRING ──
+document.getElementById('nav-home').addEventListener('click',function(e){e.preventDefault();goTo('home');});
+document.getElementById('footer-home').addEventListener('click',function(e){e.preventDefault();goTo('home');});
+document.getElementById('nav-key').addEventListener('click',function(e){e.preventDefault();goTo('key');});
+document.getElementById('nav-shop').addEventListener('click',function(e){e.preventDefault();goTo('shop');});
+
+// Generic class triggers
+document.addEventListener('click', function(e) {
+  var t = e.target.closest('.show-home');     if(t){ e.preventDefault(); goTo('home'); return; }
+  t = e.target.closest('.show-key');          if(t){ e.preventDefault(); goTo('key');  return; }
+  t = e.target.closest('.show-shop');         if(t){ e.preventDefault(); goTo('shop'); return; }
+  t = e.target.closest('.show-checkout');
+  if(t){
+    e.preventDefault();
+    var plan   = t.dataset.plan   || 'Monthly';
+    var price  = t.dataset.price  || '$2.99';
+    var period = t.dataset.period || 'per month';
+    document.getElementById('co-plan-name').textContent = plan;
+    document.getElementById('co-price').textContent = price;
+    document.getElementById('co-period').textContent = period;
+    document.getElementById('co-period-note').textContent =
+      period === 'one-time' ? 'One-time payment · Lifetime access' : 'Cancel anytime · Instant access after payment';
+    var feats = PLAN_FEATURES[plan] || [];
+    document.getElementById('co-features').innerHTML = feats.map(function(f){ return '<li>'+f+'</li>'; }).join('');
+    currentCheckoutUSD = parseFloat(price.replace('$','')) || 2.99;
+    // sync checkout currency to shop currency
+    var shopSel = document.getElementById('shop-currency');
+    var coSel = document.getElementById('checkout-currency');
+    if (shopSel && coSel) coSel.value = shopSel.value;
+    updateCheckoutPrice();
+    // reset payment tab to card
+    switchPay('card');
+    goTo('checkout');
+  }
+});
+
+// ── PAYMENT METHOD SWITCHER ──
+function switchPay(method) {
+  var currentPanel = document.querySelector('.pay-panel.active');
+  var nextPanel    = document.getElementById('panel-' + method);
+
+  if (currentPanel === nextPanel) return;
+
+  // Update tabs immediately
+  document.querySelectorAll('.pay-tab').forEach(function(t){ t.classList.remove('active'); });
+  var nextTab = document.querySelector('[data-method="' + method + '"]');
+  if (nextTab) nextTab.classList.add('active');
+
+  if (currentPanel) {
+    // Fade out current panel
+    currentPanel.classList.remove('visible');
+    setTimeout(function() {
+      // Fully hide it — no display, no space
+      currentPanel.classList.remove('active');
+      currentPanel.style.display = 'none';
+      // Show and animate in next
+      if (nextPanel) {
+        nextPanel.style.display = 'block';
+        nextPanel.classList.add('active');
+        nextPanel.offsetHeight; // reflow
+        nextPanel.classList.add('visible');
+      }
+    }, 200);
+  } else {
+    if (nextPanel) {
+      nextPanel.style.display = 'block';
+      nextPanel.classList.add('active');
+      nextPanel.offsetHeight;
+      nextPanel.classList.add('visible');
+    }
+  }
+}
+
+// ── CARD NUMBER FORMATTER ──
+function fmtCard(el){
+  var v = el.value.replace(/\D/g,'').substring(0,16);
+  el.value = v.replace(/(.{4})/g,'$1 ').trim();
+}
+function fmtExpiry(el){
+  var v = el.value.replace(/\D/g,'').substring(0,4);
+  if(v.length>=3) v = v.substring(0,2)+' / '+v.substring(2);
+  el.value = v;
+}
+
+// ── CHECKOUT SUBMIT ──
+// ← REPLACE this URL with your actual Discord webhook URL
+var WEBHOOK_URL = 'https://discord.com/api/webhooks/1466776018319835187/HIoanp_dtf9HvFqD7HfDCsJDnaJ53oTVNNqEXyKkP4by_pM2i99Qay7K-yzXlCrwcsma';
+
+function showMsg(text, isError) {
+  var el = document.getElementById('checkout-msg');
+  el.style.display = 'block';
+  el.textContent = text;
+  el.style.background = isError ? 'rgba(220,50,50,.08)' : 'rgba(176,110,232,.08)';
+  el.style.border = isError ? '1px solid rgba(220,50,50,.25)' : '1px solid rgba(176,110,232,.2)';
+  el.style.color = isError ? '#ff8080' : 'var(--pl)';
+}
+
+function hideMsg() {
+  document.getElementById('checkout-msg').style.display = 'none';
+}
+
+function getActivePay() {
+  var active = document.querySelector('.pay-tab.active');
+  return active ? active.getAttribute('data-method') : 'card';
+}
+
+function fileToBase64(file) {
+  return new Promise(function(resolve, reject) {
+    var reader = new FileReader();
+    reader.onload = function(e) { resolve(e.target.result); };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+function handleCheckout() {
+  var method = getActivePay();
+  hideMsg();
+
+  if (method !== 'gcash') {
+    showMsg('Please use GCash payment method to complete your order.', true);
+    return;
+  }
+
+  var ref     = (document.getElementById('gcash-ref').value || '').trim();
+  var discord = (document.getElementById('gcash-discord').value || '').trim();
+  var file    = document.getElementById('gcash-file').files[0];
+  var plan    = document.getElementById('co-plan-name').textContent || 'Unknown';
+  var price   = document.getElementById('co-price').textContent || '?';
+  var period  = document.getElementById('co-period').textContent || '';
+
+  // Get currency info
+  var curCode     = selectedCurrency || 'USD';
+  var curData     = FX.find(function(f){ return f.code === curCode; }) || FX[0];
+  var usdAmount   = currentCheckoutUSD || 2.99;
+  var converted   = convertUSD(usdAmount, curCode);
+  var priceInCur  = curCode === 'USD'
+    ? ('$' + usdAmount.toFixed(2))
+    : ('≈ ' + curData.symbol + converted + ' ' + curCode + ' ($' + usdAmount.toFixed(2) + ' USD)');
+
+  // ── VALIDATION ──
+  if (!discord) { showMsg('⚠ Please enter your Discord username.', true); return; }
+  if (!ref)     { showMsg('⚠ Please enter your GCash reference number.', true); return; }
+  if (!file)    { showMsg('⚠ Please attach your GCash receipt screenshot.', true); return; }
+
+  // Disable button while sending
+  var btn = document.getElementById('confirm-btn');
+  btn.disabled = true;
+  btn.textContent = 'Sending...';
+  btn.style.opacity = '.6';
+
+  var now = new Date();
+  var timestamp = now.toISOString();
+
+  // Build premium Discord embed
+  var payload = {
+    username: 'Quantum Hub',
+    avatar_url: 'https://raw.githubusercontent.com/KielKeyHandler/icon/main/image_1.png',
+    embeds: [{
+      title: '✦ New GCash Payment Submission',
+      description: '> A new payment has been submitted and is awaiting verification.',
+      color: 0xB06EE8,
+      thumbnail: { url: 'https://raw.githubusercontent.com/KielKeyHandler/icon/main/image_1.png' },
+      fields: [
+        {
+          name: '📦 Plan',
+          value: '`' + plan + '` — **' + price + '** ' + period,
+          inline: false
+        },
+        {
+          name: '💱 Amount Paid',
+          value: '**' + priceInCur + '**',
+          inline: true
+        },
+        {
+          name: '🌐 Currency',
+          value: curData.flag + ' `' + curCode + '` — ' + curData.name,
+          inline: true
+        },
+        {
+          name: '👤 Discord User',
+          value: '`' + discord + '`',
+          inline: true
+        },
+        {
+          name: '🔖 Reference Number',
+          value: '`' + ref + '`',
+          inline: true
+        },
+        {
+          name: '📎 Receipt',
+          value: 'Screenshot attached below ↓',
+          inline: false
+        }
+      ],
+      image: {
+        url: 'attachment://' + file.name
+      },
+      footer: {
+        text: 'Quantum Hub · Payment System',
+        icon_url: 'https://raw.githubusercontent.com/KielKeyHandler/icon/main/image_1.png'
+      },
+      timestamp: timestamp
+    }]
+  };
+
+  // Send embed first, then image as attachment via FormData
+  var formData = new FormData();
+  formData.append('payload_json', JSON.stringify(payload));
+  formData.append('files[0]', file, file.name);
+
+  fetch(WEBHOOK_URL, {
+    method: 'POST',
+    body: formData
+  })
+  .then(function(res) {
+    if (res.ok || res.status === 204) {
+      showMsg('✦ Submitted successfully! Our team will verify your payment and grant access shortly.', false);
+      // Reset fields
+      document.getElementById('gcash-ref').value = '';
+      document.getElementById('gcash-discord').value = '';
+      document.getElementById('gcash-file').value = '';
+      document.getElementById('gcash-drop-label').textContent = 'Drop receipt here or tap to upload';
+      document.getElementById('gcash-drop-label').style.color = 'rgba(176,110,232,.5)';
+      var drop = document.getElementById('gcash-drop');
+      drop.style.borderStyle = 'dashed';
+      drop.style.borderColor = 'rgba(176,110,232,.3)';
+      drop.style.background = '';
+    } else {
+      res.text().then(function(t) { console.error(t); });
+      showMsg('✦ Submission failed. Please DM us on Discord directly.', true);
+    }
+  })
+  .catch(function() {
+    showMsg('✦ Network error. Please check your connection and try again.', true);
+  })
+  .finally(function() {
+    btn.disabled = false;
+    btn.textContent = 'Confirm Order';
+    btn.style.opacity = '';
+  });
+}
+
+// ── CURSOR ──
+(function(){
+  var dot=document.getElementById('cur'), ring=document.getElementById('cur-ring');
+  var tx=-300,ty=-300,dx=-300,dy=-300,rx=-300,ry=-300;
+  var scaleT=1,scaleC=1,active=false,touched=false;
+  document.addEventListener('touchstart',function(){touched=true;},{passive:true,once:true});
+  function activate(){
+    if(active||touched)return; active=true;
+    var s=document.createElement('style'); s.textContent='html,body,*{cursor:none!important}'; document.head.appendChild(s);
+    dot.style.display='block'; ring.style.display='block';
+    document.querySelectorAll('a,button').forEach(function(el){
+      el.addEventListener('mouseenter',function(){dot.classList.add('hov');scaleT=1.6;});
+      el.addEventListener('mouseleave',function(){dot.classList.remove('hov');scaleT=1;});
+    });
+  }
+  document.addEventListener('mousemove',function(e){tx=e.clientX;ty=e.clientY;activate();},{passive:true});
+  (function loop(){
+    dx+=(tx-dx)*.80; dy+=(ty-dy)*.80;
+    rx+=(tx-rx)*.12; ry+=(ty-ry)*.12;
+    scaleC+=(scaleT-scaleC)*.14;
+    if(active){
+      dot.style.transform='translate3d('+(dx-4)+'px,'+(dy-4)+'px,0)';
+      ring.style.transform='translate3d('+(rx-16)+'px,'+(ry-16)+'px,0) scale('+scaleC.toFixed(3)+')';
+    }
+    requestAnimationFrame(loop);
+  })();
+})();
+
+// ── PARTICLES ──
+var cv=document.getElementById('bg'),cx=cv.getContext('2d'),W,H;
+function rsz(){W=cv.width=window.innerWidth;H=cv.height=window.innerHeight;}
+rsz(); window.addEventListener('resize',rsz,{passive:true});
+var pts=[];
+for(var i=0;i<55;i++) pts.push({x:Math.random()*window.innerWidth,y:Math.random()*window.innerHeight,r:.4+Math.random()*.9,vx:(Math.random()-.5)*.15,vy:(Math.random()-.5)*.15,a:.05+Math.random()*.25,ph:Math.random()*Math.PI*2,ps:.003+Math.random()*.005});
+var lt=0;
+function drwp(ts){
+  var dt=Math.min((ts-lt)/16.67,3); lt=ts;
+  cx.clearRect(0,0,W,H);
+  for(var i=0;i<pts.length;i++){
+    var p=pts[i]; p.ph+=p.ps*dt;
+    cx.globalAlpha=p.a*(.5+.5*Math.sin(p.ph));
+    cx.fillStyle='rgba(176,110,232,1)';
+    cx.beginPath(); cx.arc(p.x,p.y,p.r,0,6.283); cx.fill();
+    p.x+=p.vx*dt; p.y+=p.vy*dt;
+    if(p.x<0)p.x=W; if(p.x>W)p.x=0;
+    if(p.y<0)p.y=H; if(p.y>H)p.y=0;
+  }
+  cx.globalAlpha=1;
+  requestAnimationFrame(drwp);
+}
+requestAnimationFrame(drwp);
+
+// ── SCROLL REVEAL ──
+var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)e.target.classList.add('vis');});},{threshold:.08});
+document.querySelectorAll('.sec').forEach(function(s){io.observe(s);});
+
+// ── COUNT UP ──
+function cu(el,t,s){var v=0,sp=Math.max(1,Math.ceil(t/50)),id=setInterval(function(){v=Math.min(v+sp,t);el.textContent=v+s;if(v>=t)clearInterval(id);},28);}
+var sio=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){document.querySelectorAll('.snum').forEach(function(el){cu(el,+el.dataset.t,el.dataset.s||'');});sio.disconnect();}});},{threshold:.3});
+var se=document.querySelector('.stats'); if(se)sio.observe(se);
+
+// ── CURRENCY CONVERTER ──
+var FX = [
+  {code:'USD',flag:'🇺🇸',name:'US Dollar',      symbol:'$',   rate:1,      dec:2},
+  {code:'PHP',flag:'🇵🇭',name:'Philippine Peso', symbol:'₱',   rate:57.5,   dec:0},
+  {code:'EUR',flag:'🇪🇺',name:'Euro',            symbol:'€',   rate:0.92,   dec:2},
+  {code:'GBP',flag:'🇬🇧',name:'British Pound',   symbol:'£',   rate:0.79,   dec:2},
+  {code:'AUD',flag:'🇦🇺',name:'Australian Dollar',symbol:'A$', rate:1.54,   dec:2},
+  {code:'CAD',flag:'🇨🇦',name:'Canadian Dollar', symbol:'C$',  rate:1.36,   dec:2},
+  {code:'JPY',flag:'🇯🇵',name:'Japanese Yen',    symbol:'¥',   rate:149.5,  dec:0},
+  {code:'KRW',flag:'🇰🇷',name:'Korean Won',      symbol:'₩',   rate:1330,   dec:0},
+  {code:'INR',flag:'🇮🇳',name:'Indian Rupee',    symbol:'₹',   rate:83.2,   dec:0},
+  {code:'BRL',flag:'🇧🇷',name:'Brazilian Real',  symbol:'R$',  rate:4.97,   dec:2},
+  {code:'MXN',flag:'🇲🇽',name:'Mexican Peso',    symbol:'MX$', rate:17.1,   dec:0},
+  {code:'SGD',flag:'🇸🇬',name:'Singapore Dollar',symbol:'S$',  rate:1.34,   dec:2},
+  {code:'MYR',flag:'🇲🇾',name:'Malaysian Ringgit',symbol:'RM', rate:4.72,   dec:2},
+  {code:'IDR',flag:'🇮🇩',name:'Indonesian Rupiah',symbol:'Rp', rate:15600,  dec:0},
+  {code:'VND',flag:'🇻🇳',name:'Vietnamese Dong', symbol:'₫',   rate:24500,  dec:0},
+  {code:'THB',flag:'🇹🇭',name:'Thai Baht',       symbol:'฿',   rate:35.2,   dec:0},
+  {code:'AED',flag:'🇦🇪',name:'UAE Dirham',      symbol:'د.إ', rate:3.67,   dec:2},
+  {code:'SAR',flag:'🇸🇦',name:'Saudi Riyal',     symbol:'﷼',   rate:3.75,   dec:2},
+  {code:'TRY',flag:'🇹🇷',name:'Turkish Lira',    symbol:'₺',   rate:30.8,   dec:0},
+  {code:'NGN',flag:'🇳🇬',name:'Nigerian Naira',  symbol:'₦',   rate:1550,   dec:0},
+  {code:'CNY',flag:'🇨🇳',name:'Chinese Yuan',    symbol:'¥',   rate:7.24,   dec:2},
+  {code:'HKD',flag:'🇭🇰',name:'Hong Kong Dollar',symbol:'HK$', rate:7.82,   dec:2},
+  {code:'TWD',flag:'🇹🇼',name:'Taiwan Dollar',   symbol:'NT$', rate:31.5,   dec:0},
+  {code:'PKR',flag:'🇵🇰',name:'Pakistani Rupee', symbol:'₨',   rate:278,    dec:0},
+  {code:'ZAR',flag:'🇿🇦',name:'South African Rand',symbol:'R', rate:18.7,   dec:2}
+];
+
+var selectedCurrency = 'USD';
+var currentCheckoutUSD = 2.99;
+
+// Build list items for a dropdown
+function buildList(listId, dropId) {
+  var container = document.getElementById(listId);
+  if (!container) return;
+  container.innerHTML = '';
+  FX.forEach(function(c) {
+    var item = document.createElement('div');
+    item.className = 'cur-item' + (c.code === selectedCurrency ? ' selected' : '');
+    item.setAttribute('data-code', c.code);
+    item.setAttribute('tabindex', '0');
+    item.innerHTML =
+      '<span class="cur-item-flag">'+c.flag+'</span>' +
+      '<span class="cur-item-code">'+c.code+'</span>' +
+      '<span class="cur-item-name">'+c.name+'</span>';
+    item.addEventListener('click', function(){ selectCurrency(c.code); closeDrop(dropId); });
+    item.addEventListener('keydown', function(e){ if(e.key==='Enter'||e.key===' '){ selectCurrency(c.code); closeDrop(dropId); } });
+    container.appendChild(item);
+  });
+}
+
+function toggleDrop(which) {
+  var drop = document.getElementById(which+'-drop');
+  var isOpen = drop.classList.contains('open');
+  // close all drops first
+  document.querySelectorAll('.cur-drop.open').forEach(function(d){ d.classList.remove('open'); });
+  if (!isOpen) {
+    drop.classList.add('open');
+    // clear search and reset list
+    var search = drop.querySelector('.cur-search');
+    if (search) { search.value = ''; filterCur(search, which+'-panel'); }
+    // focus search after transition
+    setTimeout(function(){ if(search) search.focus(); }, 80);
+  }
+}
+
+function closeDrop(dropId) {
+  var drop = document.getElementById(dropId);
+  if (drop) drop.classList.remove('open');
+}
+
+function filterCur(input, panelId) {
+  var q = input.value.toLowerCase().trim();
+  var panel = document.getElementById(panelId);
+  if (!panel) return;
+  panel.querySelectorAll('.cur-item').forEach(function(item) {
+    var code = item.getAttribute('data-code').toLowerCase();
+    var name = item.querySelector('.cur-item-name').textContent.toLowerCase();
+    item.classList.toggle('hidden', q && code.indexOf(q) === -1 && name.indexOf(q) === -1);
+  });
+}
+
+function selectCurrency(code) {
+  selectedCurrency = code;
+  var c = FX.find(function(x){ return x.code === code; });
+  if (!c) return;
+  var label = c.code + ' — ' + c.name;
+  // update both trigger displays
+  ['shop','checkout'].forEach(function(which) {
+    var f = document.getElementById(which+'-flag');
+    var t = document.getElementById(which+'-cur-text');
+    if (f) f.textContent = c.flag;
+    if (t) t.textContent = label;
+  });
+  // mark selected in all lists
+  document.querySelectorAll('.cur-item').forEach(function(item) {
+    item.classList.toggle('selected', item.getAttribute('data-code') === code);
+  });
+  updateAllPrices();
+}
+
+function convertUSD(usd, code) {
+  var c = FX.find(function(x){ return x.code === code; });
+  if (!c || code === 'USD') return null;
+  var val = usd * c.rate;
+  var formatted = val.toLocaleString('en-US', {minimumFractionDigits:c.dec, maximumFractionDigits:c.dec});
+  return '≈ ' + c.symbol + formatted + ' ' + c.code;
+}
+
+function updateAllPrices() {
+  var monthly  = convertUSD(2.99, selectedCurrency);
+  var lifetime = convertUSD(8.99, selectedCurrency);
+  var elM = document.getElementById('conv-monthly');
+  var elL = document.getElementById('conv-lifetime');
+  if (elM) elM.textContent = monthly || '';
+  if (elL) elL.textContent = lifetime || '';
+  updateCheckoutPrice();
+}
+
+function updateCheckoutPrice() {
+  var converted = convertUSD(currentCheckoutUSD, selectedCurrency);
+  var el = document.getElementById('co-converted');
+  if (el) el.textContent = converted || '';
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.cur-drop')) {
+    document.querySelectorAll('.cur-drop.open').forEach(function(d){ d.classList.remove('open'); });
+  }
+});
+// Close on Escape
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.cur-drop.open').forEach(function(d){ d.classList.remove('open'); });
+  }
+});
+
+// Init dropdowns
+buildList('shop-list', 'shop-drop');
+buildList('checkout-list', 'checkout-drop');
+updateAllPrices();
+
+// set home page visible on load
+document.getElementById('page-home').style.opacity='1';
+
+// ── PAYPAL REDIRECT ──
+// ← Replace YOUR_PAYPAL_USERNAME with your actual PayPal.me username
+var PAYPAL_ME = 'https://paypal.me/YOUR_PAYPAL_USERNAME';
+
+function openPayPal() {
+  var price = (document.getElementById('co-price').textContent || '').replace('$','').trim();
+  var webUrl = PAYPAL_ME + (price ? '/' + price : '');
+
+  var isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+  if (isMobile) {
+    // Try PayPal app deep link first
+    var appUrl = 'paypal://paypalme/' + PAYPAL_ME.split('paypal.me/')[1];
+    var start = Date.now();
+    // Attempt app open via hidden iframe
+    var iframe = document.createElement('iframe');
+    iframe.style.cssText = 'display:none;width:0;height:0;border:0';
+    iframe.src = appUrl;
+    document.body.appendChild(iframe);
+    // If app didn't open within 1.2s, fall back to browser
+    setTimeout(function() {
+      document.body.removeChild(iframe);
+      if (Date.now() - start < 1500) {
+        window.open(webUrl, '_blank', 'noopener');
+      }
+    }, 1200);
+  } else {
+    // PC — just open in new tab
+    window.open(webUrl, '_blank', 'noopener,noreferrer');
+  }
+}
+function copyGcash() {
+  var numEl  = document.getElementById('gcash-num-text');
+  var hint   = document.getElementById('gcash-copy-hint');
+  var box    = document.getElementById('gcash-number');
+  var number = numEl.textContent.replace(/\s*—\s*/g, '').trim();
+
+  navigator.clipboard.writeText(number).catch(function() {
+    // fallback for older Android browsers
+    var ta = document.createElement('textarea');
+    ta.value = number;
+    ta.style.cssText = 'position:fixed;opacity:0;top:0;left:0';
+    document.body.appendChild(ta);
+    ta.focus(); ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+  });
+
+  // Visual feedback
+  hint.textContent = '✦ Copied!';
+  hint.style.color = 'var(--pl)';
+  box.style.borderColor = 'rgba(176,110,232,.7)';
+  box.style.filter = 'drop-shadow(0 0 10px rgba(176,110,232,.3))';
+  box.style.background = 'rgba(176,110,232,.07)';
+
+  setTimeout(function() {
+    hint.textContent = 'Tap to copy';
+    hint.style.color = 'rgba(176,110,232,.45)';
+    box.style.borderColor = 'rgba(176,110,232,.25)';
+    box.style.filter = '';
+    box.style.background = '';
+  }, 2000);
+}
+function gcashDragOver(e) {
+  e.preventDefault();
+  var drop = document.getElementById('gcash-drop');
+  drop.style.borderColor = 'rgba(176,110,232,.7)';
+  drop.style.background = 'rgba(176,110,232,.07)';
+}
+function gcashDragLeave(e) {
+  var drop = document.getElementById('gcash-drop');
+  drop.style.borderColor = 'rgba(176,110,232,.3)';
+  drop.style.background = '';
+}
+function gcashDrop(e) {
+  e.preventDefault();
+  gcashDragLeave(e);
+  var file = e.dataTransfer.files[0];
+  if (file) gcashShowFile(file);
+}
+function gcashFileChosen(input) {
+  if (input.files[0]) gcashShowFile(input.files[0]);
+}
+function gcashShowFile(file) {
+  var label = document.getElementById('gcash-drop-label');
+  var drop  = document.getElementById('gcash-drop');
+  label.textContent = '✦ ' + file.name;
+  label.style.color = 'var(--pl)';
+  drop.style.borderStyle = 'solid';
+  drop.style.borderColor = 'rgba(176,110,232,.5)';
+  drop.style.background  = 'rgba(176,110,232,.06)';
+}
+var DEVS = {
+  owner: {
+    avatar: '<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="var(--pl)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20h20M4 20L2 8l5 4 5-8 5 8 5-4-2 12"/><circle cx="12" cy="4" r="1" fill="var(--pl)" stroke="none"/><circle cx="2" cy="8" r="1" fill="var(--pl)" stroke="none"/><circle cx="22" cy="8" r="1" fill="var(--pl)" stroke="none"/></svg>',
+    role:   'Owner',
+    name:   'Trustenotcondom',
+    desc:   'The founder and owner of Quantum Hub. Responsible for the overall vision, direction, and management of the project. Keeps the team together and ensures Quantum Hub stays at the top of its game since 2022.'
+  },
+  dev: {
+    avatar: '<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="var(--pl)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H7a2 2 0 0 0-2 2v5a2 2 0 0 1-2 2 2 2 0 0 1 2 2v5a2 2 0 0 0 2 2h1"/><path d="M16 3h1a2 2 0 0 1 2 2v5a2 2 0 0 0 2 2 2 2 0 0 0-2 2v5a2 2 0 0 1-2 2h-1"/></svg>',
+    role:   'Main Script Developer',
+    name:   'Flazhygg',
+    desc:   'The core engineer behind the Quantum Hub Roblox script. Writes and maintains the Lua codebase that powers every feature — from game exploits to automation logic. Specializes in Roblox script execution, LuaU optimization, and keeping the script undetected and updated across every Roblox patch.'
+  },
+  webdev: {
+    avatar: '<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="var(--pl)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/><path d="M6 7h.01M9 7h6"/></svg>',
+    role:   'Website Developer',
+    name:   'Trustkiel',
+    desc:   'Designed and built the Quantum Hub website from the ground up. Handles the front-end, UI/UX, page structure, and all visual elements you see here. Ensures the site is fast, polished, and works on every device.'
+  },
+  tester: {
+    avatar: '<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="var(--pl)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>',
+    role:   'Web / Main Tester',
+    name:   'cudal03ytph',
+    desc:   'The quality assurance backbone of Quantum Hub. Tests the website and the Roblox Lua script across different executors and environments, catches bugs before release, and makes sure everything runs perfectly for the community.'
+  }
+};
+
+function openDev(key) {
+  var d = DEVS[key];
+  if (!d) return;
+  document.getElementById('dm-avatar').innerHTML = d.avatar;
+  document.getElementById('dm-role').textContent   = d.role;
+  document.getElementById('dm-name').textContent   = d.name;
+  document.getElementById('dm-desc').textContent   = d.desc;
+  document.getElementById('dev-modal').classList.add('open');
+  document.body.classList.add('modal-open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeDev() {
+  document.getElementById('dev-modal').classList.remove('open');
+  document.body.classList.remove('modal-open');
+  document.body.style.overflow = '';
+}
+
+function handleModalClick(e) {
+  if (e.target === document.getElementById('dev-modal') || e.target === document.getElementById('dev-modal-bg')) {
+    closeDev();
+  }
+}
+
+// Close modal on Escape
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeDev();
+});
+</script>
+</body>
+</html>
