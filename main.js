@@ -9,7 +9,7 @@
    CONFIG — set your links & GitHub Pages URL
 ────────────────────────────────────────── */
 var CP_LINKS = {
-  1: 'https://lootlabs.gg/YOUR_CP1_LINK_HERE',
+  1: 'https://direct-link.net/2561546/piqYsBqnZeyP',
   2: 'https://lootlabs.gg/YOUR_CP2_LINK_HERE',
   3: 'https://lootlabs.gg/YOUR_CP3_LINK_HERE',
 };
