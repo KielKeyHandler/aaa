@@ -30,23 +30,26 @@
       </div>
       <div class="badge cp">Checkpoint 1 of 3</div>
 
-      <!-- Checkpoint window (hidden until Start clicked) -->
       <div class="cp-window" id="cpWindow1">
         <div class="cp-window-header">
           <span class="cp-window-title">🔗 Complete the checkpoint below</span>
-          <div class="cp-timer-wrap">
-            <span class="cp-timer" id="cpTimer1">--</span>
+          <span class="cp-timer" id="cpTimer1">⏳</span>
+        </div>
+        <div class="cp-iframe-wrap">
+          <iframe class="cp-iframe" id="cpIframe1" src="about:blank" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-top-navigation"></iframe>
+          <div class="cp-done-overlay" id="doneOverlay1">
+            <div class="cp-done-icon">✅</div>
+            <div class="cp-done-text">Checkpoint Complete!</div>
           </div>
         </div>
-        <iframe class="cp-iframe" id="cpIframe1" src="about:blank" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-top-navigation"></iframe>
         <div class="cp-window-footer" id="cpFooter1">
-          <span class="cp-foot-text">Complete the ad above, then continue</span>
+          <span class="cp-foot-text">Complete the ad above to unlock Continue</span>
         </div>
+        <button class="manual-btn" id="manualBtn1">I completed it manually</button>
       </div>
 
-      <p class="status-text" id="status1">⚠ Start the checkpoint below to unlock Continue</p>
-
-      <div class="btn-wrap">
+      <p class="status-text" id="status1">⚠ Start the checkpoint to unlock Continue</p>
+      <div class="btn-wrap" id="startWrap1">
         <button class="btn" id="startBtn1">
           <span class="btn-label">
             <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
@@ -54,14 +57,12 @@
           </span>
         </button>
       </div>
-
       <div class="btn-wrap" style="display:none" id="continueWrap1">
         <div class="btn-pulse" id="pulse1"></div>
         <button class="btn locked" id="continueBtn1" disabled>
           <span class="btn-label" id="label1">🔒 &nbsp;Locked</span>
         </button>
       </div>
-
       <div class="progress">
         <div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
       </div>
@@ -91,19 +92,23 @@
       <div class="cp-window" id="cpWindow2">
         <div class="cp-window-header">
           <span class="cp-window-title">🔗 Complete the checkpoint below</span>
-          <div class="cp-timer-wrap">
-            <span class="cp-timer" id="cpTimer2">--</span>
+          <span class="cp-timer" id="cpTimer2">⏳</span>
+        </div>
+        <div class="cp-iframe-wrap">
+          <iframe class="cp-iframe" id="cpIframe2" src="about:blank" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-top-navigation"></iframe>
+          <div class="cp-done-overlay" id="doneOverlay2">
+            <div class="cp-done-icon">✅</div>
+            <div class="cp-done-text">Checkpoint Complete!</div>
           </div>
         </div>
-        <iframe class="cp-iframe" id="cpIframe2" src="about:blank" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-top-navigation"></iframe>
         <div class="cp-window-footer" id="cpFooter2">
-          <span class="cp-foot-text">Complete the ad above, then continue</span>
+          <span class="cp-foot-text">Complete the ad above to unlock Continue</span>
         </div>
+        <button class="manual-btn" id="manualBtn2">I completed it manually</button>
       </div>
 
-      <p class="status-text" id="status2">⚠ Start the checkpoint below to unlock Continue</p>
-
-      <div class="btn-wrap">
+      <p class="status-text" id="status2">⚠ Start the checkpoint to unlock Continue</p>
+      <div class="btn-wrap" id="startWrap2">
         <button class="btn" id="startBtn2">
           <span class="btn-label">
             <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
@@ -111,14 +116,12 @@
           </span>
         </button>
       </div>
-
       <div class="btn-wrap" style="display:none" id="continueWrap2">
         <div class="btn-pulse" id="pulse2"></div>
         <button class="btn locked" id="continueBtn2" disabled>
           <span class="btn-label" id="label2">🔒 &nbsp;Locked</span>
         </button>
       </div>
-
       <div class="progress">
         <div class="dot done"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div>
       </div>
@@ -148,19 +151,23 @@
       <div class="cp-window" id="cpWindow3">
         <div class="cp-window-header">
           <span class="cp-window-title">🔗 Complete the checkpoint below</span>
-          <div class="cp-timer-wrap">
-            <span class="cp-timer" id="cpTimer3">--</span>
+          <span class="cp-timer" id="cpTimer3">⏳</span>
+        </div>
+        <div class="cp-iframe-wrap">
+          <iframe class="cp-iframe" id="cpIframe3" src="about:blank" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-top-navigation"></iframe>
+          <div class="cp-done-overlay" id="doneOverlay3">
+            <div class="cp-done-icon">✅</div>
+            <div class="cp-done-text">Checkpoint Complete!</div>
           </div>
         </div>
-        <iframe class="cp-iframe" id="cpIframe3" src="about:blank" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-top-navigation"></iframe>
         <div class="cp-window-footer" id="cpFooter3">
-          <span class="cp-foot-text">Complete the ad above, then continue</span>
+          <span class="cp-foot-text">Complete the ad above to unlock Continue</span>
         </div>
+        <button class="manual-btn" id="manualBtn3">I completed it manually</button>
       </div>
 
-      <p class="status-text" id="status3">⚠ Start the checkpoint below to unlock Continue</p>
-
-      <div class="btn-wrap">
+      <p class="status-text" id="status3">⚠ Start the checkpoint to unlock Continue</p>
+      <div class="btn-wrap" id="startWrap3">
         <button class="btn" id="startBtn3">
           <span class="btn-label">
             <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
@@ -168,14 +175,12 @@
           </span>
         </button>
       </div>
-
       <div class="btn-wrap" style="display:none" id="continueWrap3">
         <div class="btn-pulse" id="pulse3"></div>
         <button class="btn locked" id="continueBtn3" disabled>
           <span class="btn-label" id="label3">🔒 &nbsp;Locked</span>
         </button>
       </div>
-
       <div class="progress">
         <div class="dot done"></div><div class="dot done"></div><div class="dot active"></div><div class="dot"></div>
       </div>
